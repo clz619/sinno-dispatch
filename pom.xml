@@ -29,7 +29,7 @@
     <properties>
         <!--project-->
         <project.encoding>UTF-8</project.encoding>
-        <version.java>1.7</version.java>
+        <version.java>1.8</version.java>
 
         <!--sinno-->
         <version.sinno.model>1.0.0</version.sinno.model>
