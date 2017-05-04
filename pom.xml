@@ -14,6 +14,8 @@
     </description>
     <modules>
         <module>dispatch-api</module>
+        <module>dispatch-register</module>
+        <module>dispatch-engine</module>
     </modules>
 
     <developers>
@@ -29,18 +31,24 @@
         <project.encoding>UTF-8</project.encoding>
         <version.java>1.7</version.java>
 
-        <!--unit-->
+        <!--sinno-->
+        <version.sinno.model>1.0.0</version.sinno.model>
+        <version.sinno.common>1.0.0</version.sinno.common>
+        <!--junit-->
         <version.junit>4.12</version.junit>
 
         <!--jackson-->
         <version.jackson.databind>2.8.6</version.jackson.databind>
 
         <!--common-->
-        <version.commons.lang3>3.4</version.commons.lang3>
+        <version.commons.lang3>3.5</version.commons.lang3>
         <version.commons.collections4>4.1</version.commons.collections4>
-
+        <version.commons.codec>1.10</version.commons.codec>
         <!--log-->
-        <version.slf4j.log4j12>1.7.22</version.slf4j.log4j12>
+        <version.slf4j.log4j12>1.7.25</version.slf4j.log4j12>
+
+        <!--curator-->
+        <version.curator>3.2.1</version.curator>
 
         <!--plugin-->
         <version.plugin.maven.compiler>3.5.1</version.plugin.maven.compiler>

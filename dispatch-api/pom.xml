@@ -11,4 +11,14 @@
 
     <artifactId>dispatch-api</artifactId>
 
+    <description>
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>win.sinno</groupId>
+            <artifactId>sinno-model</artifactId>
+            <version>${version.sinno.model}</version>
+        </dependency>
+    </dependencies>
 </project>
