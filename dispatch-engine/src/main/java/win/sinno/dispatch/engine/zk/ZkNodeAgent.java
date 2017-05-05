@@ -102,7 +102,9 @@ public class ZkNodeAgent {
             LOG.error(e.getMessage(), e);
         }
 
+        // 创建根节点
         createRootNode();
+
         final CuratorWatcher watcher = new ZkNodeWatcher(curatorFramework, path);
         curatorFramework.getChildren().usingWatcher(watcher).forPath(path);
 
@@ -121,6 +123,7 @@ public class ZkNodeAgent {
         });
 
         register();
+        //
         startScheduleManager();
 
     }
@@ -149,12 +152,14 @@ public class ZkNodeAgent {
 
         try {
             Stat stat = curatorFramework.checkExists().forPath(nodePath);
-
+            // delete
             if (stat != null) {
                 curatorFramework.delete().forPath(nodePath);
             }
 
             String registerData = ScheduleServer.getInstance().getRegisterVersion();
+
+            //创建临时节点
             String resultPath = curatorFramework.create()
                     .withMode(CreateMode.EPHEMERAL)
                     .forPath(nodePath, registerData.getBytes("utf-8"));

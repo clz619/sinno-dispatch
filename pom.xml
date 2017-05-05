@@ -48,7 +48,8 @@
         <version.slf4j.log4j12>1.7.25</version.slf4j.log4j12>
 
         <!--curator-->
-        <version.curator>3.2.1</version.curator>
+        <version.curator>2.12.0</version.curator>
+        <version.zookeeper>3.4.10</version.zookeeper>
 
         <!--plugin-->
         <version.plugin.maven.compiler>3.5.1</version.plugin.maven.compiler>

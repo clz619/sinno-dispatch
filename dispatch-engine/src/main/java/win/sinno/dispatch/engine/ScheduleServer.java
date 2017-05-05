@@ -33,17 +33,17 @@ public class ScheduleServer {
     // ---------- zk begin
     private String zkAddress;
 
-    private String zkSpacename;
+    private String zkNamespace;
 
     // rootPath=/handlerGroup
-    private String rootZkPath;
+    private String zkRootPath;
 
     private int zkSessionTimeoutMs = 30000;
 
     private int zkConnectionTimeoutMs = 15000;
 
     // node
-    private int numOfVisualNode = 8;
+    private int virtualNodeNum = 8;
 
     private CopyOnWriteArraySet<String> handlers = new CopyOnWriteArraySet<>();
 
@@ -170,21 +170,21 @@ public class ScheduleServer {
         this.zkAddress = zkAddress;
     }
 
-    public String getZkSpacename() {
-        return zkSpacename;
+    public String getZkNamespace() {
+        return zkNamespace;
     }
 
-    public void setZkSpacename(String zkSpacename) {
-        this.zkSpacename = zkSpacename;
+    public void setZkNamespace(String zkNamespace) {
+        this.zkNamespace = zkNamespace;
     }
 
-    public String getRootZkPath() {
-        return rootZkPath;
+    public String getZkRootPath() {
+        return zkRootPath;
     }
 
-    public void setRootZkPath(String rootZkPath) {
-        this.rootZkPath = rootZkPath;
-        this.handlerGroup = rootZkPath.substring(1);
+    public void setZkRootPath(String zkRootPath) {
+        this.zkRootPath = zkRootPath;
+        this.handlerGroup = zkRootPath.substring(1);
     }
 
     public int getZkSessionTimeoutMs() {
@@ -203,12 +203,12 @@ public class ScheduleServer {
         this.zkConnectionTimeoutMs = zkConnectionTimeoutMs;
     }
 
-    public int getNumOfVisualNode() {
-        return numOfVisualNode;
+    public int getVirtualNodeNum() {
+        return virtualNodeNum;
     }
 
-    public void setNumOfVisualNode(int numOfVisualNode) {
-        this.numOfVisualNode = numOfVisualNode;
+    public void setVirtualNodeNum(int virtualNodeNum) {
+        this.virtualNodeNum = virtualNodeNum;
     }
 
     public String getHandlerGroup() {
@@ -217,7 +217,7 @@ public class ScheduleServer {
 
     public void setHandlerGroup(String handlerGroup) {
         this.handlerGroup = handlerGroup;
-        this.rootZkPath = "/" + handlerGroup;
+        this.zkRootPath = "/" + handlerGroup;
     }
 
     public int getHandelrCoreSize() {
@@ -256,7 +256,7 @@ public class ScheduleServer {
      * reset
      */
     public void reset() {
-        //TODO
+        // 停止 任务分配
         this.stopScheduler();
         this.registerVersion = "0";
         this.registerTime = 100;

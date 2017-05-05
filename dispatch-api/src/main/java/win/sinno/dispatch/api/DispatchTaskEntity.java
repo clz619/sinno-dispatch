@@ -36,7 +36,7 @@ public class DispatchTaskEntity implements IBaseModel {
     /**
      * task deal trace id
      */
-    private Long traceId;
+    private String traceId;
 
     /**
      * handler group
@@ -62,6 +62,7 @@ public class DispatchTaskEntity implements IBaseModel {
 
     /**
      * task status.
+     * {@link DispatchTaskEntityStatus}
      */
     private Integer status;
 
@@ -133,11 +134,11 @@ public class DispatchTaskEntity implements IBaseModel {
         this.parameter = parameter;
     }
 
-    public Long getTraceId() {
+    public String getTraceId() {
         return traceId;
     }
 
-    public void setTraceId(Long traceId) {
+    public void setTraceId(String traceId) {
         this.traceId = traceId;
     }
 

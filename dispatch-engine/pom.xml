@@ -19,7 +19,7 @@
             <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>win.sinno</groupId>
             <artifactId>dispatch-api</artifactId>
@@ -36,6 +36,12 @@
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
             <version>${version.curator}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>${version.zookeeper}</version>
         </dependency>
 
         <dependency>
