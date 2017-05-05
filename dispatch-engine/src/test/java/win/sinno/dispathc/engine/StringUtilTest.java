@@ -11,7 +11,7 @@ import java.util.List;
  * @version : 1.0
  * @since : 2017/5/3 17:49
  */
-public class StringUtilTets {
+public class StringUtilTest {
 
     @Test
     public void testJoin() {

@@ -1,5 +1,7 @@
 package win.sinno.dispatch.engine.event;
 
+import win.sinno.dispatch.engine.repository.EventInConsumerRepository;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,8 +43,6 @@ public class EventExecutorManager {
         return this.executorVersion.get();
     }
 
-    //TODO
-
     /**
      * 复位执行版本
      */
@@ -57,6 +57,20 @@ public class EventExecutorManager {
      */
     public boolean hasInited() {
         return initFlag.get();
+    }
+
+//TODO
+
+    public void clearInReadyRunningQueue() {
+        lock.lock();
+        try {
+            for (EventExecutor eventExecutor : eventExecutors) {
+                eventExecutor.clearInReadyRunningQueue();
+            }
+            EventInConsumerRepository.getInstance().removeAll();
+        } finally {
+            lock.unlock();
+        }
     }
 
 }
