@@ -14,6 +14,33 @@ import java.util.Map;
  */
 public class DispatchParam {
 
+    // 业务参数
+    public static final String BIZ_PARAM = "bizParam";
+
+    // 尝试次数
+    public static final String RETRY_TIME = "retryTime";
+
+    /**
+     * 任务id
+     */
+    public static final String TASK_ID = "taskId";
+
+    /**
+     * 任务节点
+     */
+    public static final String NODE = "node";
+
+    /**
+     * 跟踪id
+     */
+    public static final String TRACE_ID = "traceId";
+
+    /**
+     * 处理组
+     */
+    public static final String HANDLER_GROUP = "handlerGroup";
+
+
     private Map<String, Object> properties = new HashMap<>();
 
     public void addProperty(String key, Object value) {
@@ -24,28 +51,76 @@ public class DispatchParam {
         return properties.get(key);
     }
 
-    public String getBizParameter() {
-        return (String) this.getProperty("parameter");
+    public String getBizParams() {
+        Object obj = this.getProperty(BIZ_PARAM);
+        if (obj == null) {
+            return null;
+        }
+        return (String) obj;
+    }
+
+    public void setBizParam(String param) {
+        addProperty(BIZ_PARAM, param);
     }
 
     public Integer getRetryTime() {
-        return (Integer) this.getProperty("retryTime");
+        Object obj = this.getProperty(RETRY_TIME);
+        if (obj == null) {
+            return null;
+        }
+        return (Integer) obj;
+    }
+
+    public void setRetryTime(Integer retryTime) {
+        addProperty(RETRY_TIME, retryTime);
     }
 
     public Long getTaskId() {
-        return (Long) this.getProperty("id");
+        Object obj = this.getProperty(TASK_ID);
+        if (obj == null) {
+            return null;
+        }
+        return (Long) obj;
+    }
+
+    public void setTaskId(Long taskId) {
+        addProperty(TASK_ID, taskId);
     }
 
     public Integer getTaskNode() {
-        return (Integer) this.getProperty("node");
+        Object obj = this.getProperty(NODE);
+        if (obj == null) {
+            return null;
+        }
+        return (Integer) obj;
+    }
+
+    public void setTaskNode(Integer node) {
+        addProperty(NODE, node);
     }
 
     public String getTraceId() {
-        return (String) this.getProperty("traceId");
+        Object obj = this.getProperty(TRACE_ID);
+        if (obj == null) {
+            return null;
+        }
+        return (String) obj;
+    }
+
+    public void setTraceId(String traceId) {
+        addProperty(TRACE_ID, traceId);
     }
 
     public String getHandlerGroup() {
-        return (String) this.getProperty("handlerGroup");
+        Object obj = this.getProperty(HANDLER_GROUP);
+        if (obj == null) {
+            return null;
+        }
+        return (String) obj;
+    }
+
+    public void setHandlerGroup(String handlerGroup) {
+        addProperty(HANDLER_GROUP, handlerGroup);
     }
 
 }

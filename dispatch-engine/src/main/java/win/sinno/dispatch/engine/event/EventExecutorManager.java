@@ -1,7 +1,9 @@
 package win.sinno.dispatch.engine.event;
 
+import org.apache.commons.collections4.CollectionUtils;
 import win.sinno.dispatch.engine.repository.EventInConsumerRepository;
 
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,8 +61,6 @@ public class EventExecutorManager {
         return initFlag.get();
     }
 
-//TODO
-
     public void clearInReadyRunningQueue() {
         lock.lock();
         try {
@@ -73,4 +73,41 @@ public class EventExecutorManager {
         }
     }
 
+    public List<EventExecutor> getEventExecutors() {
+        lock.lock();
+        try {
+            return eventExecutors;
+        } finally {
+            lock.unlock();
+        }
+
+    }
+
+    /**
+     * init
+     *
+     * @param eventConfigs
+     */
+    public void init(List<EventConfig> eventConfigs) {
+        if (CollectionUtils.isEmpty(eventConfigs)
+                || CollectionUtils.isEmpty(eventConfigs.get(0).getNodeList())) {
+            return;
+        }
+
+        lock.lock();
+        try {
+            eventExecutors.clear();
+            // 集群版本
+            executorVersion.set(eventConfigs.get(0).getIdentifyCode());
+
+            //init event executor
+            EventExecutor eventExecutor = EventExecutorFactory.createExecutor(eventConfigs.get(0));
+            //得到事件处理器
+            eventExecutors.add(eventExecutor);
+
+            initFlag.set(true);
+        } finally {
+            lock.unlock();
+        }
+    }
 }

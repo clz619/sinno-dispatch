@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import win.sinno.dispatch.api.DispatchTaskEntity;
 import win.sinno.dispatch.engine.ScheduleServer;
+import win.sinno.dispatch.engine.repository.EventInConsumerRepository;
 
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,6 +17,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 事件执行器
+ * <p>
+ * 一个handler 一个fetcher 得到一个executor
  *
  * @author : admin@chenlizhong.cn
  * @version : 1.0
@@ -109,10 +112,12 @@ public class EventExecutor {
                     continue;
                 }
 
-                //TODO
+                EventConsumer eventConsumer = EventConsumerFactory.create(dispatchTaskEntity, eventConfig);
 
+                eventThreadPool.execute(eventConsumer);
             } catch (Exception e) {
                 LOG.error(e.getMessage(), e);
+                EventInConsumerRepository.getInstance().remove(dispatchTaskEntity.getId());
             }
         }
     }

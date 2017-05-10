@@ -20,4 +20,6 @@ public interface ScheduleProps {
     String VIRTUAL_NODE_NUM = "scheduleVirtualNodeNum";
 
     String DIVIDE_TYPE = "shceduleDivideType";
+
+    String MAX_TRY_TIME = "scheduleMaxTryTime";
 }

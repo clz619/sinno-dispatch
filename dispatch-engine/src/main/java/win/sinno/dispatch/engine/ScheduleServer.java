@@ -1,6 +1,7 @@
 package win.sinno.dispatch.engine;
 
 import win.sinno.common.util.NetworkUtil;
+import win.sinno.dispatch.api.DispatchService;
 
 import java.net.UnknownHostException;
 import java.util.List;
@@ -59,6 +60,8 @@ public class ScheduleServer {
     // handler maxsize
     private int handlerMaxSize = 5;
 
+    private int maxTryTime = 3;
+
     private AtomicInteger handlerIdentifyCode = new AtomicInteger(0);
 
     // md5(servername0_..._servernamen)
@@ -75,6 +78,9 @@ public class ScheduleServer {
 
     // current running task num
     private AtomicInteger runningTaskNum = new AtomicInteger(0);
+
+    // TODO 初始化时进行出入
+    private DispatchService dispatchService;
 
 
     public void incrRunningTask() {
@@ -242,6 +248,22 @@ public class ScheduleServer {
 
     public void setRegisterTime(long registerTime) {
         this.registerTime = registerTime;
+    }
+
+    public int getMaxTryTime() {
+        return maxTryTime;
+    }
+
+    public void setMaxTryTime(int maxTryTime) {
+        this.maxTryTime = maxTryTime;
+    }
+
+    public DispatchService getDispatchService() {
+        return dispatchService;
+    }
+
+    public void setDispatchService(DispatchService dispatchService) {
+        this.dispatchService = dispatchService;
     }
 
     public boolean isInitOk() {

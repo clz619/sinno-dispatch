@@ -88,9 +88,11 @@ public class ScheduleManagerFactory {
 
         String divideType = properties.getProperty(ScheduleProps.DIVIDE_TYPE);
 
-        String coreSize = properties.getProperty(ScheduleProps.CORE_SIZE);
+        String coreSize = properties.getProperty(ScheduleProps.CORE_SIZE, "2");
 
-        String maxSize = properties.getProperty(ScheduleProps.MAX_SIZE);
+        String maxSize = properties.getProperty(ScheduleProps.MAX_SIZE, "5");
+
+        String maxTryTime = properties.getProperty(ScheduleProps.MAX_TRY_TIME, "3");
 
         ScheduleServer.getInstance().setZkRootPath(zkRootPath);
         ScheduleServer.getInstance().setZkSessionTimeoutMs(Integer.valueOf(zkSessionTimeout));
@@ -99,6 +101,7 @@ public class ScheduleManagerFactory {
         ScheduleServer.getInstance().setVirtualNodeNum(Integer.valueOf(virtualNodeNum));
         ScheduleServer.getInstance().setHandelrCoreSize(Integer.valueOf(coreSize));
         ScheduleServer.getInstance().setHandlerMaxSize(Integer.valueOf(maxSize));
+        ScheduleServer.getInstance().setMaxTryTime(Integer.valueOf(maxTryTime));
 
         // 初始化参数完成.
         ScheduleServer.getInstance().initOk();
@@ -107,6 +110,11 @@ public class ScheduleManagerFactory {
         start();
     }
 
+    /**
+     * start
+     *
+     * @throws Exception
+     */
     private void start() throws Exception {
         startZk();
 

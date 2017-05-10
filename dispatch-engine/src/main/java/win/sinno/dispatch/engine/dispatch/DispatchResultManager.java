@@ -25,8 +25,6 @@ public class DispatchResultManager {
     // FIXME
     private DispatchTaskService dispatchTaskService;
 
-    private static final int MAX_FAIL_TIMES = 5;
-
     private DispatchResultManager() {
     }
 
@@ -71,7 +69,7 @@ public class DispatchResultManager {
                 }
                 break;
             case FAIL2RETRY:
-                if (dispatchTaskEntity.getRetryTime() < MAX_FAIL_TIMES) {
+                if (dispatchTaskEntity.getRetryTime() < ScheduleServer.getInstance().getMaxTryTime()) {
                     //
                     Calendar c = Calendar.getInstance();
                     c.add(Calendar.MINUTE, dispatchTaskEntity.getRetryTime() + 1);//多重试一次，多延迟1分钟后执行
@@ -87,7 +85,7 @@ public class DispatchResultManager {
                 }
                 break;
             case NEXT:
-                //..
+                //.. TODO 执行下一个
                 break;
             default:
                 // FAIL2DISCARD
