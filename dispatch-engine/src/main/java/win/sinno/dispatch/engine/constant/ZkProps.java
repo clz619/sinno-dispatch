@@ -9,19 +9,19 @@ package win.sinno.dispatch.engine.constant;
  */
 public interface ZkProps {
 
-    String ZK_ADDRESS = "zkAddress";
+    String ZK_ADDRESS = "zk.address";
 
-    String ZK_NAMESPACE = "zkNamespace";
+    String ZK_NAMESPACE = "zk.namespace";
 
-    String ZK_ROOT_PATH = "zkRootPath";
+    String ZK_ROOT_PATH = "zk.root.path";
 
-    String ZK_USERNAME = "zkUsername";
+    String ZK_USERNAME = "zk.username";
 
-    String ZK_PASSWORD = "zkPassword";
+    String ZK_PASSWORD = "zk.password";
 
-    String ZK_SESSION_TIMEOUT = "zkSessionTimeout";
+    String ZK_SESSION_TIMEOUT = "zk.session.timeout";
 
-    String ZK_CONNECTION_TIMEOUT = "zkConnectionTimeout";
+    String ZK_CONNECTION_TIMEOUT = "zk.connection.timeout";
 
 
 }

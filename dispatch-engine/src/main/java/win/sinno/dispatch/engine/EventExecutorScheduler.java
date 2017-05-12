@@ -36,6 +36,7 @@ public class EventExecutorScheduler {
     private EventExecutorScheduler() {
         threadPoolExecutor = new ThreadPoolExecutor(10, 15, 10l, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(1000)
                 , new ThreadFactory() {
+
             AtomicInteger index = new AtomicInteger();
 
             @Override

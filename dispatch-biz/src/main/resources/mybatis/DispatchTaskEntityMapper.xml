@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="win.sinno.dispatch.biz.dao.DispatchTaskEntityDao">
+
+    <sql id="table">dispatch_task_entity</sql>
+
+    <sql id="field">
+        `id`
+        ,`gmt_create`
+        ,`gmt_modified`
+        ,`biz_unique_id`
+        ,`parameter`
+        ,`trace_id`
+        ,`handler_group`
+        ,`handler`
+        ,`node`
+        ,`loadbalance`
+        ,`status`
+        ,`next_exec_time`
+        ,`fail_strategy`
+        ,`retry_time`
+        ,`remark`
+    </sql>
+
+    <resultMap id="dispatchTaskEntityRm" type="dispatchTaskEntity">
+        <id property="id" column="id"/>
+        <result property="gmtCreate" column="gmt_create"/>
+        <result property="gmtModified" column="gmt_modified"/>
+        <result property="bizUniqueId" column="biz_unique_id"/>
+        <result property="parameter" column="parameter"/>
+        <result property="traceId" column="trace_id"/>
+        <result property="handlerGroup" column="handler_group"/>
+        <result property="handler" column="handler"/>
+        <result property="node" column="node"/>
+        <result property="loadbalance" column="loadbalance"/>
+        <result property="status" column="status"/>
+        <result property="nextExecTime" column="next_exec_time"/>
+        <result property="failStrategy" column="fail_strategy"/>
+        <result property="retryTime" column="retry_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="countAll" resultType="long">
+        SELECT COUNT(1) FROM
+        <include refid="table"/>
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(1) FROM
+        <include refid="table"/>
+        <where>
+            <if test="handlerGroup!=null">handler_group=#{handlerGroup}</if>
+            <if test="node!=null">AND node=#{node}</if>
+            <if test="status!=null">AND status=#{status}</if>
+            <if test="handler!=null">AND handler=#{handler}</if>
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="long" resultMap="dispatchTaskEntityRm">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE id = #{id}
+    </select>
+
+
+    <select id="selectWithLimit" resultMap="dispatchTaskEntityRm">
+        SELECT * FROM
+        <include refid="table"/>
+        <where>
+            handler_group=#{handlerGroup}
+            <if test="nodes!=null">
+                AND node IN
+                <foreach collection="nodes" item="item" index="index" open="("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY gmt_create ASC
+        <if test="limit!=null">LIMIT #{limit}</if>
+    </select>
+
+    <insert id="insert" parameterType="dispatchTaskEntity"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        ( `id`
+        ,`gmt_create`
+        ,`biz_unique_id`
+        ,`parameter`
+        ,`trace_id`
+        ,`handler_group`
+        ,`handler`
+        ,`node`
+        ,`loadbalance`
+        ,`status`
+        ,`next_exec_time`
+        ,`fail_strategy`
+        ,`retry_time`
+        ,`remark`)
+        VALUES
+        (#{id},#{gmtCreate},#{bizUniqueId},#{parameter},#{traceId},#{handlerGroup}
+        ,#{handler},#{node},#{loadbalance},#{status},#{nextExecTime},#{failStrategy},#{retryTime},#{remark})
+    </insert>
+
+    <insert id="insertBatch" parameterType="list" useGeneratedKeys="true"
+            keyProperty="id">
+        <selectKey resultType="long" keyProperty="id" order="BEFORE">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+
+        INSERT INTO
+        <include refid="table"/>
+        ( `id`
+        ,`gmt_create`
+        ,`biz_unique_id`
+        ,`parameter`
+        ,`trace_id`
+        ,`handler_group`
+        ,`handler`
+        ,`node`
+        ,`loadbalance`
+        ,`status`
+        ,`next_exec_time`
+        ,`fail_strategy`
+        ,`retry_time`
+        ,`remark`)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.gmtCreate},#{item.bizUniqueId},#{item.parameter},#{item.traceId},#{item.handlerGroup}
+            ,#{item.handler},#{item.node},#{item.loadbalance},#{item.status},#{item.nextExecTime},#{item.failStrategy},#{item.retryTime},#{item.remark})
+        </foreach>
+    </insert>
+
+    <update id="updateById" parameterType="dispatchTaskEntity">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="bizUniqueId!=null">
+                biz_unique_id=#{bizUniqueId},
+            </if>
+            <if test="parameter!=null">
+                parameter=#{parameter},
+            </if>
+            <if test="traceId!=null">
+                trace_id=#{traceId},
+            </if>
+            <if test="handlerGroup!=null">
+                handler_group=#{handlerGroup},
+            </if>
+            <if test="handler!=null">
+                handler=#{handler},
+            </if>
+            <if test="node!=null">
+                node=#{node},
+            </if>
+            <if test="loadbalance!=null">
+                loadbalance=#{loadbalance},
+            </if>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+            <if test="nextExecTime!=null">
+                next_exec_time=#{nextExecTime},
+            </if>
+            <if test="failStrategy!=null">
+                fail_strategy=#{failStrategy},
+            </if>
+            <if test="retryTime!=null">
+                retry_time=#{retryTime},
+            </if>
+            <if test="remark!=null">
+                remark=#{remark},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateBatch" parameterType="list">
+        <foreach collection="list" item="item" index="index" open=""
+                 close="" separator=";">
+            UPDATE
+            <include refid="table"/>
+            <set>
+                <if test="bizUniqueId!=null">
+                    biz_unique_id=#{item.bizUniqueId},
+                </if>
+                <if test="parameter!=null">
+                    parameter=#{item.parameter},
+                </if>
+                <if test="traceId!=null">
+                    trace_id=#{item.traceId},
+                </if>
+
+                <if test="handlerGroup!=null">
+                    handler_group=#{item.handlerGroup},
+                </if>
+                <if test="handler!=null">
+                    handler=#{item.handler},
+                </if>
+                <if test="node!=null">
+                    node=#{item.node},
+                </if>
+
+                <if test="loadbalance!=null">
+                    loadbalance=#{item.loadbalance},
+                </if>
+                <if test="status!=null">
+                    status=#{item.status},
+                </if>
+                <if test="nextExecTime!=null">
+                    next_exec_time=#{item.nextExecTime},
+                </if>
+
+                <if test="failStrategy!=null">
+                    fail_strategy=#{item.failStrategy},
+                </if>
+                <if test="retryTime!=null">
+                    retry_time=#{item.retryTime},
+                </if>
+                <if test="remark!=null">
+                    remark=#{item.remark},
+                </if>
+            </set>
+            WHERE id = ${item.id}
+        </foreach>
+    </update>
+
+    <update id="updateStatusByIdAndHandlerGroup">
+        UPDATE
+        <include refid="table"/>
+        SET status=#{status}
+        WHERE handler_group=#{handlerGroup}
+        AND id=#{id}
+    </update>
+
+    <update id="updateStatusByBizIdAndHandlerGroup">
+        UPDATE
+        <include refid="table"/>
+        SET status=#{status}
+        WHERE handler_group=#{handlerGroup}
+        AND biz_unique_id=#{bizUniqueId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM
+        <include refid="table"/>
+        WHERE id = #{id}
+    </delete>
+
+
+</mapper>

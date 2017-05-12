@@ -9,17 +9,19 @@ package win.sinno.dispatch.engine.constant;
  */
 public interface ScheduleProps {
 
-    String HANDLER_GROUP = "scheduleHandlerGroup";
+    String HANDLER_GROUP = "schedule.handlerGroup";
 
-    String HANDLERS = "scheduleHandlers";
+    String HANDLERS = "schedule.handlers";
 
-    String CORE_SIZE = "scheduleCoreSize";
+    String CORE_SIZE = "schedule.coreSize";
 
-    String MAX_SIZE = "scheduleMaxSize";
+    String MAX_SIZE = "schedule.maxSize";
 
-    String VIRTUAL_NODE_NUM = "scheduleVirtualNodeNum";
+    String VIRTUAL_NODE_NUM = "schedule.virtualNodeNum";
 
-    String DIVIDE_TYPE = "shceduleDivideType";
+    String DIVIDE_TYPE = "shcedule.divideType";
 
-    String MAX_TRY_TIME = "scheduleMaxTryTime";
+    String MAX_TRY_TIME = "schedule.maxTryTime";
+
+    String DISPATCH_SERVICE = "schedule.dispatchService";
 }

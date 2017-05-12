@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="win.sinno.dispatch.register.dao.DispatchRegisterDao">
+
+    <sql id="table">dispatch_register</sql>
+
+    <sql id="field">
+        `id`
+        ,`gmt_create`
+        ,`gmt_modified`
+        ,`handler_group`
+        ,`hostname`
+        ,`register_time`
+        ,`nodes`
+        ,`register_version`
+        ,`version`
+    </sql>
+
+    <resultMap id="dispatchRegisterRm" type="dispatchRegister">
+        <id property="id" column="id"/>
+        <result property="gmtCreate" column="gmt_create"/>
+        <result property="gmtModified" column="gmt_modified"/>
+        <result property="handlerGroup" column="handler_group"/>
+        <result property="hostname" column="hostname"/>
+        <result property="registerTime" column="register_time"/>
+        <result property="nodes" column="nodes"/>
+        <result property="registerVersion" column="register_version"/>
+        <result property="version" column="version"/>
+    </resultMap>
+
+    <select id="countAll" resultType="long">
+        SELECT COUNT(1) FROM
+        <include refid="table"/>
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(1) FROM
+        <include refid="table"/>
+        <where>
+            <if test="handlerGroup!=null">handler_group=#{handlerGroup}</if>
+            <if test="hostname!=null">AND hostname=#{hostname}</if>
+            <if test="registerVersion!=null">AND register_version=#{registerVersion}</if>
+            <if test="version!=null">AND version=#{version}</if>
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="long" resultMap="dispatchRegisterRm">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE id = #{id}
+    </select>
+
+
+    <select id="selectLastRegister" parameterType="java.lang.String" resultMap="dispatchRegisterRm">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE handler_group=#{handlerGroup}
+        ORDER BY gmt_modified DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectRegister" resultMap="dispatchRegisterRm">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE handler_group=#{handlerGroup}
+        AND hostname=#{hostname}
+    </select>
+
+    <select id="selectRegisters" resultMap="dispatchRegisterRm">
+        SELECT * FROM
+        <include refid="table"/>
+        WHERE handler_group=#{handlerGroup}
+    </select>
+
+    <insert id="insert" parameterType="dispatchRegister"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        ( `id`
+        ,`gmt_create`
+        ,`handler_group`
+        ,`hostname`
+        ,`register_time`
+        ,`nodes`
+        ,`register_version`
+        ,`version`
+        )
+        VALUES
+        (#{id},#{gmtCreate},#{handlerGroup}
+        ,#{hostname},#{registerTime},#{nodes}
+        ,#{registerVersion},#{version})
+    </insert>
+
+    <insert id="insertBatch" parameterType="list" useGeneratedKeys="true"
+            keyProperty="id">
+        <selectKey resultType="long" keyProperty="id" order="BEFORE">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+
+        INSERT INTO
+        <include refid="table"/>
+        ( `id`
+        ,`gmt_create`
+        ,`handler_group`
+        ,`hostname`
+        ,`register_time`
+        ,`nodes`
+        ,`register_version`
+        ,`version`)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.gmtCreate},#{item.handlerGroup}
+            ,#{item.hostname},#{item.registerTime},#{item.nodes}
+            ,#{item.registerVersion},#{item.version})
+        </foreach>
+    </insert>
+
+    <update id="updateById" parameterType="dispatchRegister">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="handlerGroup!=null">
+                handler_group=#{handlerGroup},
+            </if>
+            <if test="hostname!=null">
+                hostname=#{hostname},
+            </if>
+            <if test="registerTime!=null">
+                register_time=#{registerTime},
+            </if>
+            <if test="nodes!=null">
+                nodes=#{nodes},
+            </if>
+            <if test="registerVersion!=null">
+                register_version=#{registerVersion},
+            </if>
+            <if test="version!=null">
+                version=#{version},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateBatch" parameterType="list">
+        <foreach collection="list" item="item" index="index" open=""
+                 close="" separator=";">
+            UPDATE
+            <include refid="table"/>
+            <set>
+                <if test="handlerGroup!=null">
+                    handler_group=#{item.handlerGroup},
+                </if>
+                <if test="hostname!=null">
+                    hostname=#{item.hostname},
+                </if>
+                <if test="registerTime!=null">
+                    register_time=#{item.registerTime},
+                </if>
+                <if test="nodes!=null">
+                    nodes=#{item.nodes},
+                </if>
+                <if test="registerVersion!=null">
+                    register_version=#{item.registerVersion},
+                </if>
+                <if test="version!=null">
+                    version=#{item.version},
+                </if>
+            </set>
+            WHERE id = ${item.id}
+        </foreach>
+    </update>
+
+    <update id="updateRegisterWithVersion">
+        UPDATE
+        <include refid="table"/>
+        SET
+        register_version=#{registerVersion},
+        register_time=#{registerTime},
+        nodes=#{nodes}
+        WHERE handler_group=#{handlerGroup}
+        AND hostname=#{hostname}
+        AND version=#{expectVersion}
+    </update>
+
+
+    <delete id="deleteById">
+        DELETE FROM
+        <include refid="table"/>
+        WHERE id = #{id}
+    </delete>
+
+
+</mapper>

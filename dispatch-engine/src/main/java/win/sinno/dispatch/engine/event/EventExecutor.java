@@ -72,6 +72,9 @@ public class EventExecutor {
             return;
         }
 
+        // FIXME
+        // 若处理不过来，会导致线程堵塞
+        // 应该改成获取的数据，丢入处理池，处理池根据现有的处理事件量，再进行事件获取
         lock.lock();
 
         try {

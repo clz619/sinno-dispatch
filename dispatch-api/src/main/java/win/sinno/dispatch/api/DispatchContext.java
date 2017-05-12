@@ -1,10 +1,12 @@
-package win.sinno.dispatch.api.reigster;
+package win.sinno.dispatch.api;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * dispatch context
+ * <p>
+ * 注册上下文对象
  *
  * @author : admin@chenlizhong.cn
  * @version : 1.0

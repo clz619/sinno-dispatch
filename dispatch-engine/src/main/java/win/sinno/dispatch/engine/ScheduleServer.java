@@ -271,6 +271,7 @@ public class ScheduleServer {
     }
 
     public void initOk() {
+        // 检测 初始化 数据，必需参数不能为空
         initFlag.set(true);
     }
 

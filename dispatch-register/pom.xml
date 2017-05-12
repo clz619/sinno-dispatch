@@ -10,12 +10,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dispatch-register</artifactId>
+    <version>${version.sinno.dispatch}</version>
 
     <dependencies>
         <dependency>
             <groupId>win.sinno</groupId>
             <artifactId>dispatch-api</artifactId>
-            <version>${project.version}</version>
+            <version>${version.sinno.dispatch}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>win.sinno</groupId>
+            <artifactId>sinno-model</artifactId>
+            <version>${version.sinno.model}</version>
         </dependency>
 
         <dependency>
@@ -35,6 +42,19 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${version.slf4j.log4j12}</version>
+        </dependency>
+
+        <!--Mybatis-->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>${version.mybatis}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${version.spring}</version>
         </dependency>
 
     </dependencies>

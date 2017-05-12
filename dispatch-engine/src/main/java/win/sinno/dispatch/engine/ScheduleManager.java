@@ -1,16 +1,15 @@
 package win.sinno.dispatch.engine;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import win.sinno.dispatch.api.DispatchContext;
 import win.sinno.dispatch.api.DispatchTaskService;
-import win.sinno.dispatch.api.reigster.DispatchContext;
+import win.sinno.dispatch.engine.util.VersionGenerator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -56,11 +55,8 @@ public class ScheduleManager {
                             LOG.warn("schedule server init ok,but server list is empty. path:" + path);
                             continue;
                         }
-
-                        Collections.sort(serverList);
-
-                        String servers = StringUtils.join(serverList.toArray(new String[serverList.size()]), "_");
-                        String currentRegisterVersion = DigestUtils.md5Hex(servers);
+                        
+                        String currentRegisterVersion = VersionGenerator.version(serverList);
 
                         if (!StringUtils.equals(currentRegisterVersion
                                 , ScheduleServer.getInstance().getRegisterVersion())) {
@@ -194,8 +190,7 @@ public class ScheduleManager {
         // update register info
         ScheduleServer.getInstance().setRegister(currentRegisterVersion, registerTime);
 
-        // TODO 真实任务分配接口 注入
-        DispatchTaskService dispatchTaskService = null;
+        DispatchTaskService dispatchTaskService = ScheduleServer.getInstance().getDispatchService();
 
         try {
             DispatchContext context = new DispatchContext();

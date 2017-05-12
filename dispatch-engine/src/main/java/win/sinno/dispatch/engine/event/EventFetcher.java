@@ -4,7 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import win.sinno.dispatch.api.DispatchService;
 import win.sinno.dispatch.api.DispatchTaskEntity;
 import win.sinno.dispatch.api.DispatchTaskService;
-import win.sinno.dispatch.api.reigster.DispatchContext;
+import win.sinno.dispatch.api.DispatchContext;
 import win.sinno.dispatch.engine.ScheduleServer;
 
 import java.util.Collections;

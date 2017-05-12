@@ -20,9 +20,9 @@ public class DispatchTaskEntity implements IBaseModel {
      */
     private Long id;
 
-    private Date addTs;
+    private Date gmtCreate;
 
-    private Date updateTs;
+    private Date gmtModified;
 
     /**
      * biz uiq id
@@ -67,14 +67,14 @@ public class DispatchTaskEntity implements IBaseModel {
     private Integer status;
 
     /**
-     * next exec time
+     * next exec time,unit:millisecond
      */
     private Long nextExecTime;
 
     /**
      * fail strategy:
      * 1.retry
-     * 2.un retry,dicard
+     * 2.un retry,discard
      */
     private Integer failStrategy;
 
@@ -99,23 +99,23 @@ public class DispatchTaskEntity implements IBaseModel {
     }
 
     @Override
-    public Date getAddTs() {
-        return addTs;
+    public Date getGmtCreate() {
+        return gmtCreate;
     }
 
     @Override
-    public void setAddTs(Date addTs) {
-        this.addTs = addTs;
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
     }
 
     @Override
-    public Date getUpdateTs() {
-        return updateTs;
+    public Date getGmtModified() {
+        return gmtModified;
     }
 
     @Override
-    public void setUpdateTs(Date updateTs) {
-        this.updateTs = updateTs;
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
     }
 
     public String getBizUniqueId() {
@@ -212,5 +212,26 @@ public class DispatchTaskEntity implements IBaseModel {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Override
+    public String toString() {
+        return "DispatchTaskEntity{" +
+                "id=" + id +
+                ", gmtCreate=" + gmtCreate +
+                ", gmtModified=" + gmtModified +
+                ", bizUniqueId='" + bizUniqueId + '\'' +
+                ", parameter='" + parameter + '\'' +
+                ", traceId='" + traceId + '\'' +
+                ", handlerGroup='" + handlerGroup + '\'' +
+                ", handler='" + handler + '\'' +
+                ", node=" + node +
+                ", loadbalance=" + loadbalance +
+                ", status=" + status +
+                ", nextExecTime=" + nextExecTime +
+                ", failStrategy=" + failStrategy +
+                ", retryTime=" + retryTime +
+                ", remark='" + remark + '\'' +
+                '}';
     }
 }

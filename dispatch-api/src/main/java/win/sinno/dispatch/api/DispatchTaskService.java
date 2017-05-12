@@ -1,7 +1,5 @@
 package win.sinno.dispatch.api;
 
-import win.sinno.dispatch.api.reigster.DispatchContext;
-
 import java.util.Date;
 
 /**

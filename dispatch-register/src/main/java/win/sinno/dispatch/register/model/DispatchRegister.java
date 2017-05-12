@@ -1,4 +1,4 @@
-package win.sinno.dispatch.reigster.model;
+package win.sinno.dispatch.register.model;
 
 import win.sinno.model.IBaseModel;
 
@@ -17,20 +17,38 @@ public class DispatchRegister implements IBaseModel {
 
     private Long id;
 
-    private Date addTs;
+    private Date gmtCreate;
 
-    private Date updateTs;
+    private Date gmtModified;
 
+    /**
+     * 处理器群组
+     */
     private String handlerGroup;
 
-    private String hostName;
+    /**
+     * 机器名
+     */
+    private String hostname;
 
+    /**
+     * 注册事件
+     */
     private long registerTime;
 
+    /**
+     * 负责节点 如： 1,3,5,7
+     */
     private String nodes;
 
+    /**
+     * 注册版本，集群(serverA,serverB,...,serverN).hashCode()
+     */
     private String registerVersion;
 
+    /**
+     * 当前机器节点在版本，如首次进入集群为1，之后集群改变（有新机器加入，或机器退出），每次版本变更，version+1
+     */
     private long version;
 
     @Override
@@ -44,23 +62,23 @@ public class DispatchRegister implements IBaseModel {
     }
 
     @Override
-    public Date getAddTs() {
-        return addTs;
+    public Date getGmtCreate() {
+        return gmtCreate;
     }
 
     @Override
-    public void setAddTs(Date addTs) {
-        this.addTs = addTs;
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
     }
 
     @Override
-    public Date getUpdateTs() {
-        return updateTs;
+    public Date getGmtModified() {
+        return gmtModified;
     }
 
     @Override
-    public void setUpdateTs(Date updateTs) {
-        this.updateTs = updateTs;
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
     }
 
     public String getHandlerGroup() {
@@ -71,12 +89,12 @@ public class DispatchRegister implements IBaseModel {
         this.handlerGroup = handlerGroup;
     }
 
-    public String getHostName() {
-        return hostName;
+    public String getHostname() {
+        return hostname;
     }
 
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
     public long getRegisterTime() {
@@ -109,5 +127,20 @@ public class DispatchRegister implements IBaseModel {
 
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    @Override
+    public String toString() {
+        return "DispatchRegister{" +
+                "id=" + id +
+                ", gmtCreate=" + gmtCreate +
+                ", gmtModified=" + gmtModified +
+                ", handlerGroup='" + handlerGroup + '\'' +
+                ", hostname='" + hostname + '\'' +
+                ", registerTime=" + registerTime +
+                ", nodes='" + nodes + '\'' +
+                ", registerVersion='" + registerVersion + '\'' +
+                ", version=" + version +
+                '}';
     }
 }

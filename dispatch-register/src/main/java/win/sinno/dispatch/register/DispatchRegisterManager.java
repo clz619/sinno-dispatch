@@ -1,11 +1,13 @@
-package win.sinno.dispatch.reigster;
+package win.sinno.dispatch.register;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import win.sinno.dispatch.api.reigster.DispatchContext;
-import win.sinno.dispatch.reigster.dao.DispatchRegisterDao;
-import win.sinno.dispatch.reigster.model.DispatchRegister;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import win.sinno.dispatch.api.DispatchContext;
+import win.sinno.dispatch.register.dao.DispatchRegisterDao;
+import win.sinno.dispatch.register.model.DispatchRegister;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.concurrent.ConcurrentMap;
  * @version : 1.0
  * @since : 2017/5/3 13:40
  */
+@Component
 public class DispatchRegisterManager {
 
     private static final Logger LOG = LoggerFactory.getLogger("dispatch-register");
@@ -29,7 +32,7 @@ public class DispatchRegisterManager {
      */
     private ConcurrentMap<String, DispatchContext> dispatchContextMap = new ConcurrentHashMap<>();
 
-    // dispatch register dao
+    @Autowired
     private DispatchRegisterDao dispatchRegisterDao;
 
     public void init() {
@@ -43,6 +46,7 @@ public class DispatchRegisterManager {
                             String handlerGroup = entry.getKey();
                             DispatchContext dispatchContext = entry.getValue();
 
+                            //获取最后更新的机器，以最后更新的机器的版本信息为准
                             DispatchRegister register = dispatchRegisterDao.selectLastRegister(handlerGroup);
 
                             if (register == null
@@ -50,9 +54,10 @@ public class DispatchRegisterManager {
                                 continue;
                             }
 
+                            //更新本地的上下文对象
                             dispatchContext.setRegisterVersion(register.getRegisterVersion());
                             dispatchContext.setRegisterTime(register.getRegisterTime());
-                            dispatchContext.setHostName(register.getHostName());
+                            dispatchContext.setHostName(register.getHostname());
                         }
                     } catch (Exception e) {
                         LOG.error("loop query dispatch register exception." + dispatchContextMap, e);
@@ -95,7 +100,7 @@ public class DispatchRegisterManager {
             //未注册过
             register = new DispatchRegister();
             register.setHandlerGroup(handlerGroup);
-            register.setHostName(hostName);
+            register.setHostname(hostName);
             register.setRegisterVersion(context.getRegisterVersion());
             register.setRegisterTime(context.getRegisterTime());
 
@@ -124,12 +129,10 @@ public class DispatchRegisterManager {
                 }
                 nodes = sb.substring(0, sb.length() - 1);
             }
-            int num = dispatchRegisterDao.updateRegisterWithVersion(context.getRegisterVersion(),
+            Long num = dispatchRegisterDao.updateRegisterWithVersion(context.getRegisterVersion(),
                     context.getRegisterTime(), nodes, handlerGroup, hostName, register.getVersion());
 
-            if (num > 0) {
-                return true;
-            }
+            return (num > 0);
         }
 
         return false;
@@ -154,7 +157,7 @@ public class DispatchRegisterManager {
 
             registerContext = new DispatchContext();
             registerContext.setHandlerGroup(register.getHandlerGroup());
-            registerContext.setHostName(register.getHostName());
+            registerContext.setHostName(register.getHostname());
             registerContext.setRegisterVersion(register.getRegisterVersion());
             registerContext.setRegisterTime(register.getRegisterTime());
 
@@ -171,17 +174,17 @@ public class DispatchRegisterManager {
         if (context.getRegisterTime() > (registerContext.getRegisterTime() + 5)) {
             // check register and if need , do update
             DispatchRegister currentRegister = dispatchRegisterDao.selectLastRegister(handlerGroup);
+
             if (currentRegister == null) {
                 return false;
             }
+
             if (StringUtils.equals(registerVersion, currentRegister.getRegisterVersion())) {
                 //update context map
                 dispatchContextMap.put(handlerGroup, context);
                 return true;
             }
         }
-
-        //
 
         return false;
     }
@@ -190,6 +193,7 @@ public class DispatchRegisterManager {
         if (StringUtils.isBlank(handlerGroup)) {
             return Collections.emptyList();
         }
+
         return dispatchRegisterDao.selectRegisters(handlerGroup);
     }
 }
