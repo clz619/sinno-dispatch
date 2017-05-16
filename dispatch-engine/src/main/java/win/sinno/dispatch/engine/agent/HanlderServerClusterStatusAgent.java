@@ -129,12 +129,12 @@ public class HanlderServerClusterStatusAgent implements IAgent {
                                     continue;
                                 }
 
-                                handlerServer.setNodeList(newNodeList);
                                 handlerServer.clearAllHandler();
+                                handlerServer.setNodeList(newNodeList);
                                 for (String handler : handlers) {
                                     handlerServer.addHandler(handler, new ArrayList<>(newNodeList));
                                 }
-                                handlerServer.setHandlerIdentifyCode(handlers.hashCode());
+                                handlerServer.setHandlerIdentifyCode(currentRegisterVersion.hashCode());
 
                                 // 注册变更
                                 LOG.info("###register version changed, handler constructed with new nodelist:{},registerVersion:{},registerTime:{},handerIdentifyCode:{}"

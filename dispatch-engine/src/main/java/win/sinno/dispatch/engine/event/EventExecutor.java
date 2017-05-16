@@ -100,7 +100,7 @@ public class EventExecutor {
             List<DispatchTaskEntity> dispatchTaskEntities = eventFetcher.getTask(eventConfig.getNodeList());
 
             if (CollectionUtils.isEmpty(dispatchTaskEntities)) {
-                LOG.warn("no task for handler:{},nodes:{},registerVersion:{},registerTime:{}"
+                LOG.warn("no task for handler:{} , nodes:{} , registerVersion:{} , registerTime:{}"
                         , new Object[]{eventConfig.getHandler(),
                                 eventConfig.getNodeList(),
                                 handlerServer.getRegisterVersion(),
@@ -108,7 +108,7 @@ public class EventExecutor {
                 );
                 return;
             }
-            // dispatch task
+
             dispatchTasks(dispatchTaskEntities);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);

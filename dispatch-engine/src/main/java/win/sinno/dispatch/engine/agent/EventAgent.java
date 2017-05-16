@@ -65,7 +65,6 @@ public class EventAgent implements IAgent {
             }
 
             private void init() {
-
                 List<EventConfig> eventConfigs = new ArrayList<>();
 
                 Map<String, List<Integer>> hanlderMap = handlerServer.getHandlerRefNodeMap();

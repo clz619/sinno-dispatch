@@ -174,6 +174,7 @@ public class HandlerServerRunningData {
 
     public void clearAllHandler() {
         this.handlerRefNodeMap.clear();
+        this.handlerSet.clear();
     }
 
     public void setNodeList(List<Integer> nodeList) {

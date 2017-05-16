@@ -95,7 +95,7 @@ public class ZkNodeAgent implements IAgent {
             public void stateChanged(CuratorFramework client, ConnectionState newState) {
                 if (newState == ConnectionState.LOST
                         || newState == ConnectionState.SUSPENDED) {
-                    LOG.warn("######zksession timeout or connection loss, begining to reConnectAndRegister..."
+                    LOG.warn("######zkSession timeout or connection loss, begining to reConnectAndRegister..."
                             + newState);
                     handlerServer.reset();
                     // reconnection register
@@ -144,13 +144,13 @@ public class ZkNodeAgent implements IAgent {
 
             if (StringUtils.isNotBlank(resultPath)) {
                 //不为空
-                LOG.warn("schedule server register successed. result rootPath:" + resultPath);
+                LOG.warn("handler server register successed. result rootPath:" + resultPath);
             } else {
-                LOG.warn("schedule server node register failed. node rootPath:" + nodePath);
+                LOG.warn("handler server node register failed. node rootPath:" + nodePath);
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("schedule server node register to zk failed.");
+            throw new RuntimeException("handler server node register to zk failed.");
         }
     }
 
