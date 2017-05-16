@@ -7,7 +7,7 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import win.sinno.dispatch.engine.ScheduleServer;
+import win.sinno.dispatch.engine.server.HandlerServer;
 
 import java.util.List;
 
@@ -22,13 +22,13 @@ public class ZkNodeWatcher implements CuratorWatcher {
 
     private static final Logger LOG = LoggerFactory.getLogger("dispatch-engine");
 
+    private HandlerServer handlerServer;
+
     private CuratorFramework curatorFramework;
 
-    private String path;
-
-    public ZkNodeWatcher(CuratorFramework curatorFramework, String path) {
+    public ZkNodeWatcher(HandlerServer handlerServer, CuratorFramework curatorFramework) {
+        this.handlerServer = handlerServer;
         this.curatorFramework = curatorFramework;
-        this.path = path;
     }
 
     @Override
@@ -37,17 +37,17 @@ public class ZkNodeWatcher implements CuratorWatcher {
 
         if (curatorFramework.getState() != CuratorFrameworkState.STOPPED) {
             if (event.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
-                List<String> childList = curatorFramework.getChildren().usingWatcher(this).forPath(path);
+                List<String> childList = curatorFramework.getChildren().usingWatcher(this).forPath(handlerServer.getZkRootPath());
 
                 LOG.warn("node child changed," + childList);
-                ScheduleServer.getInstance().reset();
+                handlerServer.reset();
 
             } else if (event.getType() == Watcher.Event.EventType.None
                     && (event.getState() == Watcher.Event.KeeperState.Disconnected || event
                     .getState() == Watcher.Event.KeeperState.Expired)) {
 
                 LOG.warn("node disconnected or expired, remove handler infos." + event);
-                ScheduleServer.getInstance().reset();
+                handlerServer.reset();
 
             }
         }

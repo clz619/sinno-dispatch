@@ -13,7 +13,7 @@
     <version>${version.sinno.dispatch}</version>
 
     <description>
-        dispatch api.
+        dispatch api. define task model, and base service.
     </description>
 
     <dependencies>

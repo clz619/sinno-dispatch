@@ -13,8 +13,6 @@ public interface ZkProps {
 
     String ZK_NAMESPACE = "zk.namespace";
 
-    String ZK_ROOT_PATH = "zk.root.path";
-
     String ZK_USERNAME = "zk.username";
 
     String ZK_PASSWORD = "zk.password";

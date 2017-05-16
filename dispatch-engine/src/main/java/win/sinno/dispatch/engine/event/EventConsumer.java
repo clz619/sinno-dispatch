@@ -4,12 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import win.sinno.dispatch.api.DispatchTaskEntity;
-import win.sinno.dispatch.engine.ScheduleServer;
 import win.sinno.dispatch.engine.dispatch.DispatchHandler;
 import win.sinno.dispatch.engine.dispatch.DispatchParam;
 import win.sinno.dispatch.engine.dispatch.DispatchResult;
-import win.sinno.dispatch.engine.dispatch.DispatchResultManager;
-import win.sinno.dispatch.engine.repository.EventInConsumerRepository;
+import win.sinno.dispatch.engine.dispatch.DispatchResultService;
+import win.sinno.dispatch.engine.repository.EventConsumerRepository;
+import win.sinno.dispatch.engine.server.HandlerServer;
 import win.sinno.dispatch.engine.util.UniqueUtils;
 
 /**
@@ -21,7 +21,11 @@ import win.sinno.dispatch.engine.util.UniqueUtils;
  */
 public class EventConsumer implements Runnable {
 
-    private static final Logger LOG = LoggerFactory.getLogger("disptach");
+    private static final Logger LOG = LoggerFactory.getLogger("dispatch");
+
+    private HandlerServer handlerServer;
+
+    private EventExecutorAgent eventExecutorManager;
 
     /**
      * 任务实体
@@ -36,12 +40,12 @@ public class EventConsumer implements Runnable {
     /**
      * 结果处理
      */
-    private DispatchResultManager dispatchResultManager;
+    private DispatchResultService dispatchResultService;
 
     /**
      * 事件消费仓库
      */
-    private EventInConsumerRepository eventInConsumerRepository;
+    private EventConsumerRepository eventConsumerRepository;
 
     /**
      * 执行版本快照
@@ -56,32 +60,33 @@ public class EventConsumer implements Runnable {
      * @param dispatchResultManager
      * @param executorVersionSnapshot
      */
-    public EventConsumer(DispatchTaskEntity dispatchTaskEntity, DispatchHandler dispatchHandler,
-                         DispatchResultManager dispatchResultManager, int executorVersionSnapshot) {
+    public EventConsumer(HandlerServer handlerServer, EventExecutorAgent eventExecutorManager, DispatchTaskEntity dispatchTaskEntity, DispatchHandler dispatchHandler,
+                         DispatchResultService dispatchResultManager, int executorVersionSnapshot) {
+        this.handlerServer = handlerServer;
+        this.eventExecutorManager = eventExecutorManager;
         this.dispatchTaskEntity = dispatchTaskEntity;
         this.dispatchHandler = dispatchHandler;
-        this.dispatchResultManager = dispatchResultManager;
+        this.dispatchResultService = dispatchResultManager;
+        this.eventConsumerRepository = handlerServer.getEventConsumerRepository();
+
         this.executorVersionSnapshot = executorVersionSnapshot;
-        this.eventInConsumerRepository = EventInConsumerRepository.getInstance();
     }
 
     @Override
     public void run() {
         // incr running task
-        ScheduleServer.getInstance().incrRunningTask();
+        handlerServer.incrRunningCount();
 
-        // TODO
-        if (eventInConsumerRepository.get(dispatchTaskEntity.getId()) == null
-                ) {
+        if (eventConsumerRepository.get(dispatchTaskEntity.getId()) == null) {
             //任务不在本地消费库中
-            ScheduleServer.getInstance().decrRunningTask();
+            handlerServer.decrRunningCount();
             return;
         }
 
-        if (executorVersionSnapshot != EventExecutorManager.getInstance().getCurrentExecutorVersion()) {
+        if (executorVersionSnapshot != eventExecutorManager.getCurrentExecHandlerIdentityCode()) {
             //事件执行版本与当前 集群版本不一致，不进行执行
-            eventInConsumerRepository.remove(dispatchTaskEntity.getId());
-            ScheduleServer.getInstance().decrRunningTask();
+            eventConsumerRepository.remove(dispatchTaskEntity.getId());
+            handlerServer.decrRunningCount();
             return;
         }
 
@@ -120,9 +125,9 @@ public class EventConsumer implements Runnable {
             // 失败重试
             result = DispatchResult.FAIL2RETRY;
         } finally {
-            eventInConsumerRepository.remove(dispatchTaskEntity.getId());
-            ScheduleServer.getInstance().decrRunningTask();
-            dispatchResultManager.afterConsumer(result, dispatchTaskEntity);
+            eventConsumerRepository.remove(dispatchTaskEntity.getId());
+            handlerServer.decrRunningCount();
+            dispatchResultService.afterConsumer(result, dispatchTaskEntity);
             EventThreadContext.destory();
         }
 

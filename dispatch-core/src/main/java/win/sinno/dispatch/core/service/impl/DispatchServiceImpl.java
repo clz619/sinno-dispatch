@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import win.sinno.common.util.JsonUtil;
 import win.sinno.dispatch.api.*;
-import win.sinno.dispatch.engine.ScheduleServer;
 
 import java.util.Collections;
 import java.util.Date;
@@ -56,9 +55,7 @@ public class DispatchServiceImpl implements DispatchService {
         DispatchTaskEntity bizTask = new DispatchTaskEntity();
         bizTask.setHandlerGroup(dispatchTaskEntity.getHandlerGroup());
         bizTask.setHandler(dispatchTaskEntity.getHandler());
-
-        int loadbalance = Math.abs(dispatchTaskEntity.getLoadbalance());
-        bizTask.setNode(loadbalance % ScheduleServer.getInstance().getVirtualNodeNum());
+        bizTask.setNode(dispatchTaskEntity.getNode());
 
         bizTask.setRetryTime(0);
         bizTask.setStatus(DispatchTaskEntityStatus.NEW.getCode());

@@ -10,21 +10,9 @@ import java.util.concurrent.ConcurrentMap;
  * @version : 1.0
  * @since : 2017/5/3 15:05
  */
-public class EventInConsumerRepository {
+public class EventConsumerRepository {
 
-    private static ConcurrentMap<Long, Long> repository;
-
-    private EventInConsumerRepository() {
-        repository = new ConcurrentHashMap<>();
-    }
-
-    private static class EventInConsumerRepositoryHolder {
-        public static final EventInConsumerRepository INSTANCE = new EventInConsumerRepository();
-    }
-
-    public static EventInConsumerRepository getInstance() {
-        return EventInConsumerRepositoryHolder.INSTANCE;
-    }
+    private ConcurrentMap<Long, Long> repository = new ConcurrentHashMap<>();
 
     public boolean isContain(Long taskId) {
         Long value = repository.putIfAbsent(taskId, taskId);
@@ -42,6 +30,5 @@ public class EventInConsumerRepository {
     public void removeAll() {
         repository.clear();
     }
-
 
 }

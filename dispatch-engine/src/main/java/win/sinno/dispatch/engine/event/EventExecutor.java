@@ -4,8 +4,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import win.sinno.dispatch.api.DispatchTaskEntity;
-import win.sinno.dispatch.engine.ScheduleServer;
-import win.sinno.dispatch.engine.repository.EventInConsumerRepository;
+import win.sinno.dispatch.engine.repository.EventConsumerRepository;
+import win.sinno.dispatch.engine.server.HandlerServer;
 
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -28,30 +28,39 @@ public class EventExecutor {
 
     private static final Logger LOG = LoggerFactory.getLogger("dispatch");
 
+    private HandlerServer handlerServer;
+
+    private EventExecutorAgent eventExecutorAgent;
+
+    private EventConsumerRepository eventConsumerRepository;
+
     private EventConfig eventConfig;
 
     private EventFilter eventFilter;
 
     private EventFetcher eventFetcher;
 
-    private ThreadPoolExecutor eventThreadPool;
+    private ThreadPoolExecutor eventConsumerPool;
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    public EventExecutor(final EventConfig eventConfig, EventFilter eventFilter, EventFetcher eventFetcher) {
+    public EventExecutor(HandlerServer handlerServer, EventExecutorAgent eventExecutorAgent, EventConfig eventConfig, EventFilter eventFilter, EventFetcher eventFetcher) {
+        this.handlerServer = handlerServer;
+        this.eventExecutorAgent = eventExecutorAgent;
+        this.eventConsumerRepository = handlerServer.getEventConsumerRepository();
+
         this.eventConfig = eventConfig;
         this.eventFilter = eventFilter;
         this.eventFetcher = eventFetcher;
 
-        int coreSize = ScheduleServer.getInstance().getHandelrCoreSize();
-        int maxSize = ScheduleServer.getInstance().getHandlerMaxSize();
-
         String handlerName = eventConfig.getHandler();
-
         final String handlerNameTemp = handlerName;
 
+        int coreSize = handlerServer.getHandelrCoreSize();
+        int maxSize = handlerServer.getHandlerMaxSize();
+
         // 时间执行线程池
-        this.eventThreadPool = new ThreadPoolExecutor(coreSize, maxSize, 10L, TimeUnit.MILLISECONDS,
+        this.eventConsumerPool = new ThreadPoolExecutor(coreSize, maxSize, 10L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(10000), new ThreadFactory() {
             AtomicInteger index = new AtomicInteger();
 
@@ -67,7 +76,7 @@ public class EventExecutor {
     }
 
     public void doWork() {
-        if (eventConfig.getIdentifyCode() != ScheduleServer.getInstance().getHandlerIdentityCode()) {
+        if (eventConfig.getHandlerIdentifyCode() != handlerServer.getHandlerIdentityCode()) {
             //集群发送改变，不做处理
             return;
         }
@@ -78,18 +87,19 @@ public class EventExecutor {
         lock.lock();
 
         try {
-            if (!ScheduleServer.getInstance().canScheduler()) {
+            if (!handlerServer.isCanRunning()) {
                 LOG.info("schedule server disable schedule.");
                 return;
             }
+
             List<DispatchTaskEntity> dispatchTaskEntities = eventFetcher.getTask(eventConfig.getNodeList());
 
             if (CollectionUtils.isEmpty(dispatchTaskEntities)) {
                 LOG.warn("no task for handler:{},nodes:{},registerVersion:{},registerTime:{}"
                         , new Object[]{eventConfig.getHandler(),
                                 eventConfig.getNodeList(),
-                                ScheduleServer.getInstance().getRegisterVersion(),
-                                ScheduleServer.getInstance().getRegisterTime()}
+                                handlerServer.getRegisterVersion(),
+                                handlerServer.getRegisterTime()}
                 );
                 return;
             }
@@ -106,27 +116,24 @@ public class EventExecutor {
      * @param dispatchTaskEntities
      */
     private void dispatchTasks(List<DispatchTaskEntity> dispatchTaskEntities) {
-        // 分配任务实体
+
         for (DispatchTaskEntity dispatchTaskEntity : dispatchTaskEntities) {
+
             try {
-                //使用仓库进行过滤
+                // repo check if not contain to add
                 if (!eventFilter.isAccept(dispatchTaskEntity.getId())) {
-                    //已在仓库,不处理
                     continue;
                 }
 
-                EventConsumer eventConsumer = EventConsumerFactory.create(dispatchTaskEntity, eventConfig);
+                EventConsumer eventConsumer = EventConsumerFactory.create(handlerServer, eventExecutorAgent, dispatchTaskEntity, eventConfig);
 
-                eventThreadPool.execute(eventConsumer);
+                eventConsumerPool.execute(eventConsumer);
             } catch (Exception e) {
                 LOG.error(e.getMessage(), e);
-                EventInConsumerRepository.getInstance().remove(dispatchTaskEntity.getId());
+                // repo remove
+                eventConsumerRepository.remove(dispatchTaskEntity.getId());
             }
         }
-    }
-
-    public EventConfig getEventConfig() {
-        return eventConfig;
     }
 
     /**
@@ -135,7 +142,7 @@ public class EventExecutor {
     public void clearInReadyRunningQueue() {
         lock.lock();
         try {
-            this.eventThreadPool.getQueue().clear();
+            this.eventConsumerPool.getQueue().clear();
         } finally {
             lock.unlock();
         }

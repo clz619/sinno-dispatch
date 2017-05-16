@@ -1,4 +1,4 @@
-package win.sinno.dispatch.engine.zk;
+package win.sinno.dispatch.engine.agent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
@@ -11,8 +11,11 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import win.sinno.dispatch.engine.ScheduleManager;
-import win.sinno.dispatch.engine.ScheduleServer;
+import win.sinno.dispatch.engine.server.HandlerServer;
+import win.sinno.dispatch.engine.server.HandlerServerZkConf;
+import win.sinno.dispatch.engine.zk.ZkNodeWatcher;
+
+import java.util.List;
 
 /**
  * ak node agent
@@ -21,83 +24,59 @@ import win.sinno.dispatch.engine.ScheduleServer;
  * @version : 1.0
  * @since : 2017/5/3 15:34
  */
-public class ZkNodeAgent {
+public class ZkNodeAgent implements IAgent {
 
     private static final Logger LOG = LoggerFactory.getLogger("dispatch-engine");
 
-    private String namespace = "sinno";
+    private HandlerServerZkConf handlerServerZkConf;
 
-    private String path = "/dispatch";
-
-    private String zkAddress;
-
-    private int sessionTimeoutMs = 30000;
-
-    private int connTimeoutMs = 15000;
+    private HandlerServer handlerServer;
 
     private CuratorFramework curatorFramework;
 
-    public String getNamespace() {
-        return namespace;
+    public ZkNodeAgent(HandlerServer handlerServer) {
+        this.handlerServer = handlerServer;
+        this.handlerServerZkConf = handlerServer.getHandlerServerZkConf();
     }
 
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
+    public List<String> getChildrenForPath(String path) throws Exception {
+        return curatorFramework.getChildren().forPath(path);
     }
 
-    public String getPath() {
-        return path;
+    public void setDataForPath(String path, String data) throws Exception {
+        curatorFramework.setData().forPath(path, data.getBytes("utf-8"));
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
+    public String getDataForPath(String path) throws Exception {
+        String data = null;
+        byte[] bytes = curatorFramework.getData().forPath(path);
 
-    public String getZkAddress() {
-        return zkAddress;
-    }
+        if (bytes != null) {
+            data = new String(bytes, "utf-8");
+        }
 
-    public void setZkAddress(String zkAddress) {
-        this.zkAddress = zkAddress;
-    }
-
-    public int getSessionTimeoutMs() {
-        return sessionTimeoutMs;
-    }
-
-    public void setSessionTimeoutMs(int sessionTimeoutMs) {
-        this.sessionTimeoutMs = sessionTimeoutMs;
-    }
-
-    public int getConnTimeoutMs() {
-        return connTimeoutMs;
-    }
-
-    public void setConnTimeoutMs(int connTimeoutMs) {
-        this.connTimeoutMs = connTimeoutMs;
+        return data;
     }
 
     public void start() throws Exception {
         LOG.info("###start connecting to zk .");
 
         this.curatorFramework = CuratorFrameworkFactory.builder()
-                .connectString(zkAddress)
-                .namespace(namespace)
-                .sessionTimeoutMs(sessionTimeoutMs)
-                .connectionTimeoutMs(connTimeoutMs)
+                .connectString(handlerServerZkConf.getZkAddress())
+                .namespace(handlerServerZkConf.getZkNamespace())
+                .sessionTimeoutMs(handlerServerZkConf.getZkSessionTimeoutMs())
+                .connectionTimeoutMs(handlerServerZkConf.getZkConnectionTimeoutMs())
                 .retryPolicy(new RetryNTimes(10000, 3000))
                 .build();
 
         this.curatorFramework.start();
 
         try {
-
             LOG.info("curator client connecting...");
-            //阻塞 直到连接
+
             this.curatorFramework.blockUntilConnected();
 
             LOG.info("curator client connected... enjoy it.");
-
         } catch (InterruptedException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -105,8 +84,11 @@ public class ZkNodeAgent {
         // 创建根节点
         createRootNode();
 
-        final CuratorWatcher watcher = new ZkNodeWatcher(curatorFramework, path);
-        curatorFramework.getChildren().usingWatcher(watcher).forPath(path);
+        register();
+
+        final CuratorWatcher watcher = new ZkNodeWatcher(handlerServer, curatorFramework);
+
+        curatorFramework.getChildren().usingWatcher(watcher).forPath(handlerServerZkConf.getZkRootPath());
 
         curatorFramework.getConnectionStateListenable().addListener(new ConnectionStateListener() {
             @Override
@@ -115,60 +97,56 @@ public class ZkNodeAgent {
                         || newState == ConnectionState.SUSPENDED) {
                     LOG.warn("######zksession timeout or connection loss, begining to reConnectAndRegister..."
                             + newState);
-                    ScheduleServer.getInstance().reset();
-                    // reconn register
-                    reConnectionAndRegister(watcher, path);
+                    handlerServer.reset();
+                    // reconnection register
+                    reConnectionAndRegister(watcher, handlerServerZkConf.getZkRootPath());
                 }
             }
         });
 
-        register();
-        //
-        startScheduleManager();
 
     }
 
     private void createRootNode() throws Exception {
-        Stat stat = curatorFramework.checkExists().forPath(path);
+        Stat stat = curatorFramework.checkExists().forPath(handlerServerZkConf.getZkRootPath());
         if (stat == null) {
             String createPath = curatorFramework.create()
                     .withMode(CreateMode.PERSISTENT)
-                    .forPath(path, "0".getBytes("utf-8"));
+                    .forPath(handlerServerZkConf.getZkRootPath());
 
             if (StringUtils.isNotBlank(createPath)) {
-                LOG.info("zk root path created :" + path);
+                LOG.info("zk root rootPath created :" + handlerServerZkConf.getZkRootPath());
             } else {
-                LOG.error("zk root create failed :" + path);
-                throw new Exception("zk root create failed :" + path);
+                LOG.error("zk root create failed :" + handlerServerZkConf.getZkRootPath());
+                throw new Exception("zk root create failed :" + handlerServerZkConf.getZkRootPath());
             }
 
         } else {
-            LOG.info("zk root path already exist :" + path);
+            LOG.info("zk root rootPath already exist :" + handlerServerZkConf.getZkRootPath());
         }
     }
 
     private void register() {
-        String nodePath = path + "/" + ScheduleServer.getInstance().getHostname();
+        String nodePath = handlerServerZkConf.getZkRootPath() + "/" + handlerServer.getHostname();
 
         try {
             Stat stat = curatorFramework.checkExists().forPath(nodePath);
-            // delete
             if (stat != null) {
                 curatorFramework.delete().forPath(nodePath);
             }
 
-            String registerData = ScheduleServer.getInstance().getRegisterVersion();
+            // first 版本为 0
+            String registerData = handlerServer.getRegisterVersion();
 
-            //创建临时节点
             String resultPath = curatorFramework.create()
                     .withMode(CreateMode.EPHEMERAL)
                     .forPath(nodePath, registerData.getBytes("utf-8"));
 
             if (StringUtils.isNotBlank(resultPath)) {
                 //不为空
-                LOG.warn("schedule server register successed. result path:" + resultPath);
+                LOG.warn("schedule server register successed. result rootPath:" + resultPath);
             } else {
-                LOG.warn("schedule server node register failed. node path:" + nodePath);
+                LOG.warn("schedule server node register failed. node rootPath:" + nodePath);
             }
 
         } catch (Exception e) {
@@ -192,7 +170,7 @@ public class ZkNodeAgent {
                             curatorFramework.getChildren().usingWatcher(watcher).forPath(path);
 
                             register();
-
+                            //重新注册完成 break 退出线程
                             break;
                         }
 
@@ -211,8 +189,10 @@ public class ZkNodeAgent {
         }.start();
     }
 
-    private void startScheduleManager() {
-        ScheduleManager scheduleManager = new ScheduleManager(curatorFramework, path);
-        scheduleManager.start();
+    @Override
+    public String toString() {
+        return "ZkNodeAgent{" +
+                "handlerServerZkConf=" + handlerServerZkConf +
+                '}';
     }
 }

@@ -2,7 +2,8 @@ package win.sinno.dispatch.engine.event;
 
 import win.sinno.dispatch.api.DispatchTaskEntity;
 import win.sinno.dispatch.engine.dispatch.DispatchHandler;
-import win.sinno.dispatch.engine.dispatch.DispatchResultManager;
+import win.sinno.dispatch.engine.dispatch.DispatchHandlerFactory;
+import win.sinno.dispatch.engine.server.HandlerServer;
 
 /**
  * event consumer factory
@@ -13,18 +14,11 @@ import win.sinno.dispatch.engine.dispatch.DispatchResultManager;
  */
 public final class EventConsumerFactory {
 
-    public static EventConsumer create(DispatchTaskEntity dispatchTaskEntity, EventConfig eventConfig) {
+    public static EventConsumer create(HandlerServer handlerServer, EventExecutorAgent eventExecutorManager, DispatchTaskEntity dispatchTaskEntity, EventConfig eventConfig) {
 
-        // 事件消费器
-        String handler = dispatchTaskEntity.getHandler();
+        DispatchHandler dispatchHandler = DispatchHandlerFactory.get(dispatchTaskEntity.getHandler());
 
-        DispatchHandler dispatchHandler = null;// TODO 根据task.handler进行 处理器 映射
-
-        if (dispatchHandler == null) {
-
-        }
-
-        EventConsumer eventConsumer = new EventConsumer(dispatchTaskEntity, dispatchHandler, DispatchResultManager.getInstance(), eventConfig.getIdentifyCode());
+        EventConsumer eventConsumer = new EventConsumer(handlerServer, eventExecutorManager, dispatchTaskEntity, dispatchHandler, handlerServer.getDispatchResultService(), eventConfig.getHandlerIdentifyCode());
 
         return eventConsumer;
     }

@@ -1,6 +1,6 @@
 package win.sinno.dispatch.engine.event;
 
-import win.sinno.dispatch.engine.repository.EventInConsumerRepository;
+import win.sinno.dispatch.engine.repository.EventConsumerRepository;
 
 /**
  * event filter
@@ -11,10 +11,10 @@ import win.sinno.dispatch.engine.repository.EventInConsumerRepository;
  */
 public class EventFilter {
 
-    private EventInConsumerRepository eventInConsumerRepository;
+    private EventConsumerRepository eventConsumerRepository;
 
-    public EventFilter(EventInConsumerRepository eventInConsumerRepository) {
-        this.eventInConsumerRepository = eventInConsumerRepository;
+    public EventFilter(EventConsumerRepository eventConsumerRepository) {
+        this.eventConsumerRepository = eventConsumerRepository;
     }
 
     /**
@@ -22,7 +22,7 @@ public class EventFilter {
      * @return
      */
     public boolean isAccept(Long taskId) {
-        return !eventInConsumerRepository.isContain(taskId);
+        return !eventConsumerRepository.isContain(taskId);
     }
 
 }

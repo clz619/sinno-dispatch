@@ -1,11 +1,11 @@
 package win.sinno.dispatch.engine.event;
 
 import org.apache.commons.collections4.CollectionUtils;
+import win.sinno.dispatch.api.DispatchContext;
 import win.sinno.dispatch.api.DispatchService;
 import win.sinno.dispatch.api.DispatchTaskEntity;
 import win.sinno.dispatch.api.DispatchTaskService;
-import win.sinno.dispatch.api.DispatchContext;
-import win.sinno.dispatch.engine.ScheduleServer;
+import win.sinno.dispatch.engine.server.HandlerServer;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,10 +21,13 @@ public class EventFetcher {
 
     public static final int TASK_NUM = 100;
 
+    private HandlerServer handlerServer;
+
     private DispatchTaskService dispatchTaskService;
 
-    public EventFetcher(DispatchTaskService dispatchTaskService) {
-        this.dispatchTaskService = dispatchTaskService;
+    public EventFetcher(HandlerServer handlerServer) {
+        this.handlerServer = handlerServer;
+        this.dispatchTaskService = handlerServer.getDispatchService();
     }
 
     /**
@@ -43,15 +46,15 @@ public class EventFetcher {
 
         // dispatch context
         DispatchContext dispatchContext = new DispatchContext();
-        dispatchContext.setHandlerGroup(ScheduleServer.getInstance().getHandlerGroup());
-        dispatchContext.setHostName(ScheduleServer.getInstance().getHostname());
-        dispatchContext.setRegisterVersion(ScheduleServer.getInstance().getRegisterVersion());
-        dispatchContext.setRegisterTime(ScheduleServer.getInstance().getRegisterTime());
+        dispatchContext.setHandlerGroup(handlerServer.getHandlerGroup());
+        dispatchContext.setHostName(handlerServer.getHostname());
+        dispatchContext.setRegisterVersion(handlerServer.getRegisterVersion());
+        dispatchContext.setRegisterTime(handlerServer.getRegisterTime());
 
         DispatchService dispatchService = (DispatchService) dispatchTaskService;
 
         //任务实体集合
-        dispatchTaskEntities = dispatchService.findDispatchTasksWithLimit(ScheduleServer.getInstance().getHandlerGroup(), nodeList, TASK_NUM, dispatchContext);
+        dispatchTaskEntities = dispatchService.findDispatchTasksWithLimit(handlerServer.getHandlerGroup(), nodeList, TASK_NUM, dispatchContext);
 
         return dispatchTaskEntities == null ? Collections.<DispatchTaskEntity>emptyList() : dispatchTaskEntities;
     }

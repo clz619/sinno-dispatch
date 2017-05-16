@@ -112,11 +112,8 @@ public class DispatchServiceImpl implements DispatchService {
      */
     @Override
     public boolean addRetryTimesAndExecuteTime(long taskId, Date nextExecuteTime, TaskAttribute taskAttribute) {
-        win.sinno.dispatch.biz.model.DispatchTaskEntity dispatchTaskEntity = new win.sinno.dispatch.biz.model.DispatchTaskEntity();
-        dispatchTaskEntity.setId(taskId);
-        dispatchTaskEntity.setNextExecTime(nextExecuteTime.getTime());
 
-        return dispatchTaskEntityDao.updateById(dispatchTaskEntity) > 0;
+        return dispatchTaskEntityDao.updateNextExecTimeAndIncrRetryTime(taskId, nextExecuteTime.getTime()) > 0;
     }
 
     /**

@@ -3,11 +3,13 @@ package win.sinno.dispatch.engine.event;
 import java.util.List;
 
 /**
- * event config
+ * eventConfig
  * <p>
  * 处理器名
  * 处理节点集合
  * 处理器识别码，集群的每一个版本都对应唯一个处理识别码
+ * <p>
+ * handler,nodeList,handlerIdentifyCode
  *
  * @author : admin@chenlizhong.cn
  * @version : 1.0
@@ -20,7 +22,7 @@ public class EventConfig {
     private List<Integer> nodeList;
 
     // handler的识别码，每次集群变动，都会更新（即，每个集群的版本，各对应一个handler识别码）,实际就是集群版本号
-    private Integer identifyCode;
+    private Integer handlerIdentifyCode;
 
     public String getHandler() {
         return handler;
@@ -38,11 +40,11 @@ public class EventConfig {
         this.nodeList = nodeList;
     }
 
-    public Integer getIdentifyCode() {
-        return identifyCode;
+    public Integer getHandlerIdentifyCode() {
+        return handlerIdentifyCode;
     }
 
-    public void setIdentifyCode(Integer identifyCode) {
-        this.identifyCode = identifyCode;
+    public void setHandlerIdentifyCode(Integer handlerIdentifyCode) {
+        this.handlerIdentifyCode = handlerIdentifyCode;
     }
 }

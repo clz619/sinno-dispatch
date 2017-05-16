@@ -224,7 +224,7 @@
                     remark=#{item.remark},
                 </if>
             </set>
-            WHERE id = ${item.id}
+            WHERE id = #{item.id}
         </foreach>
     </update>
 
@@ -242,6 +242,14 @@
         SET status=#{status}
         WHERE handler_group=#{handlerGroup}
         AND biz_unique_id=#{bizUniqueId}
+    </update>
+
+    <update id="updateNextExecTimeAndIncrRetryTime">
+        UPDATE
+        <include refid="table"/>
+        SET next_exec_time = #{nextExecTime}
+        , retry_time = retry_time + 1
+        WHERE id = #{id}
     </update>
 
     <delete id="deleteById">
