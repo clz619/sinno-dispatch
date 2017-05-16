@@ -36,15 +36,16 @@ public class DispatchCoreTest {
         applicationContext = springLaunch.get();
         dispatchService = applicationContext.getBean(DispatchServiceImpl.class);
 
-        dispatchCore.setSleepPerFetchTimeMs(3000);
+        dispatchCore.setPerFetchSleepTimeMs(1000);
+        dispatchCore.setPerFetchNum(100);
         dispatchCore.setZkAddress("192.168.8.200:2181");
         dispatchCore.setZkNamespace("dispatch-agent");
         dispatchCore.setZkSessionTimeoutMs(10000);
         dispatchCore.setZkConnectionTimeoutMs(10000);
         dispatchCore.setHandlerGroup("yb");
         dispatchCore.setHandlers("demo");
-        dispatchCore.setCoreSize(2);
-        dispatchCore.setMaxSize(4);
+        dispatchCore.setCoreSize(4);
+        dispatchCore.setMaxSize(32);
         dispatchCore.setVirtualNodeNum(10);
         dispatchCore.setDivideType(1);
         dispatchCore.setDispatchService(dispatchService);
@@ -56,12 +57,12 @@ public class DispatchCoreTest {
     public void testCoreAgent() throws Exception {
         dispatchCore.startEngine();
 
-        Thread.sleep(100000000l);
+        Thread.sleep(1000000000l);
     }
 
     @Test
     public void testAddTask() throws InterruptedException {
-        for (int i = 1; i < 10000; i++) {
+        for (int i = 1; i < 10000000; i++) {
             Map<String, String> params = new HashMap<>();
             params.put("handlerGroup", "yb");
             params.put("handler", "demo");

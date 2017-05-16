@@ -36,7 +36,9 @@ public class HandlerServer implements IAgentManager {
     /**
      * 每次获取数据休眠时间
      */
-    private int sleepTimeMsPerFetch = 30000;
+    private int perFetchSleepTimeMs = 3000;
+
+    private int perFetchNum = 100;
 
     private HandlerServerZkConf handlerServerZkConf = new HandlerServerZkConf();
 
@@ -145,12 +147,20 @@ public class HandlerServer implements IAgentManager {
         this.maxTryTime = maxTryTime;
     }
 
-    public int getSleepTimeMsPerFetch() {
-        return sleepTimeMsPerFetch;
+    public int getPerFetchSleepTimeMs() {
+        return perFetchSleepTimeMs;
     }
 
-    public void setSleepTimeMsPerFetch(int sleepTimeMsPerFetch) {
-        this.sleepTimeMsPerFetch = sleepTimeMsPerFetch;
+    public void setPerFetchSleepTimeMs(int perFetchSleepTimeMs) {
+        this.perFetchSleepTimeMs = perFetchSleepTimeMs;
+    }
+
+    public int getPerFetchNum() {
+        return perFetchNum;
+    }
+
+    public void setPerFetchNum(int perFetchNum) {
+        this.perFetchNum = perFetchNum;
     }
 
     public DispatchService getDispatchService() {

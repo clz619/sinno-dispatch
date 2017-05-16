@@ -77,14 +77,11 @@ public class DispatchEngine {
             handlerList.add(handler);
         }
 
-        // handler 的标识
-        // handlerServer.setHandlerIdentifyCode(handlerList.hashCode());
-
         String zkNamespace = properties.getProperty(ZkProps.ZK_NAMESPACE);
 
-        String zkSessionTimeout = properties.getProperty(ZkProps.ZK_SESSION_TIMEOUT, "60000");
+        String zkSessionTimeout = properties.getProperty(ZkProps.ZK_SESSION_TIMEOUT, "15000");
 
-        String zkConnectionTimeout = properties.getProperty(ZkProps.ZK_CONNECTION_TIMEOUT, "60000");
+        String zkConnectionTimeout = properties.getProperty(ZkProps.ZK_CONNECTION_TIMEOUT, "15000");
 
         handlerServer.setZkNamespace(zkNamespace);
 
@@ -95,7 +92,7 @@ public class DispatchEngine {
         String handlerGroup = properties.getProperty(ServerProps.HANDLER_GROUP, "dispatch");
 
         // handler server conf
-        String virtualNodeNum = properties.getProperty(ServerProps.VIRTUAL_NODE_NUM, "16");
+        String virtualNodeNum = properties.getProperty(ServerProps.VIRTUAL_NODE_NUM, "10");
 
         String divideType = properties.getProperty(ServerProps.DIVIDE_TYPE);
 
@@ -122,6 +119,7 @@ public class DispatchEngine {
             handlerServer.setDispatchHandlerConverter(dispatchHandlerConverter);
         }
 
+
         handlerServer.setHandlerGroup(handlerGroup);
         handlerServer.setVirtualNodeNum(Integer.valueOf(virtualNodeNum));
         handlerServer.setHandelrCoreSize(Integer.valueOf(coreSize));
@@ -141,9 +139,13 @@ public class DispatchEngine {
         handlerServer.initDone();
 
         try {
-            String sleepPerFetchTimeMs = properties.getProperty(ServerProps.SLEEP_PER_FETCH_TIME_MS, "10000");
-            int sleepPerFetchTimeMsInt = Integer.valueOf(sleepPerFetchTimeMs);
-            handlerServer.setSleepTimeMsPerFetch(sleepPerFetchTimeMsInt);
+            String perFetchSleepTimeMsStr = properties.getProperty(ServerProps.SERVER_PER_FETCH_SLEEP_TIMEMS, "10000");
+            int perFetchSleepTimeMsInt = Integer.valueOf(perFetchSleepTimeMsStr);
+            handlerServer.setPerFetchSleepTimeMs(perFetchSleepTimeMsInt);
+
+            String perFetchNumStr = properties.getProperty(ServerProps.SERVER_PER_FETCH_NUM, "100");
+            int preFetchNumInt = Integer.valueOf(perFetchNumStr);
+            handlerServer.setPerFetchNum(preFetchNumInt);
         } catch (Exception ignore) {
             // ignore
         }

@@ -27,7 +27,9 @@ public interface ServerProps {
 
     String DISPATCH_HANDLER_CONVERTER = "server.dispatch.handler.converter";
 
-    String SLEEP_PER_FETCH_TIME_MS = "server.sleep.per.fetch.timems";
+    String SERVER_PER_FETCH_SLEEP_TIMEMS = "server.per.fetch.sleep.timems";
+
+    String SERVER_PER_FETCH_NUM = "server.per.fetch.num";
 
     String DEFAULT_REGISTER_VERSION = "0";
 }

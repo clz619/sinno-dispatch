@@ -34,8 +34,12 @@ public class DispatchCore {
 
     private Integer virtualNodeNum = 1;
 
-    public void setSleepPerFetchTimeMs(int sleepPerFetchTimeMs) {
-        properties.setProperty(ServerProps.SLEEP_PER_FETCH_TIME_MS, "" + sleepPerFetchTimeMs);
+    public void setPerFetchSleepTimeMs(int sleepPerFetchTimeMs) {
+        properties.setProperty(ServerProps.SERVER_PER_FETCH_SLEEP_TIMEMS, "" + sleepPerFetchTimeMs);
+    }
+
+    public void setPerFetchNum(int perFetchNum) {
+        properties.setProperty(ServerProps.SERVER_PER_FETCH_NUM, "" + perFetchNum);
     }
 
     public void setZkAddress(String zkAddress) {

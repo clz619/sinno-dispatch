@@ -19,8 +19,6 @@ import java.util.List;
  */
 public class EventFetcher {
 
-    public static final int TASK_NUM = 100;
-
     private HandlerServer handlerServer;
 
     private DispatchTaskService dispatchTaskService;
@@ -54,7 +52,7 @@ public class EventFetcher {
         DispatchService dispatchService = (DispatchService) dispatchTaskService;
 
         //任务实体集合
-        dispatchTaskEntities = dispatchService.findDispatchTasksWithLimit(handlerServer.getHandlerGroup(), nodeList, TASK_NUM, dispatchContext);
+        dispatchTaskEntities = dispatchService.findDispatchTasksWithLimit(handlerServer.getHandlerGroup(), nodeList, handlerServer.getPerFetchNum(), dispatchContext);
 
         return dispatchTaskEntities == null ? Collections.<DispatchTaskEntity>emptyList() : dispatchTaskEntities;
     }
