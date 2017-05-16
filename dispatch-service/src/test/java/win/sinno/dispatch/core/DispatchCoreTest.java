@@ -36,11 +36,11 @@ public class DispatchCoreTest {
         applicationContext = springLaunch.get();
         dispatchService = applicationContext.getBean(DispatchServiceImpl.class);
 
-        dispatchCore.setSleepPerFetchTimeMs(5000);
+        dispatchCore.setSleepPerFetchTimeMs(3000);
         dispatchCore.setZkAddress("192.168.8.200:2181");
         dispatchCore.setZkNamespace("dispatch-agent");
-        dispatchCore.setZkSessionTimeoutMs(15000);
-        dispatchCore.setZkConnectionTimeoutMs(15000);
+        dispatchCore.setZkSessionTimeoutMs(10000);
+        dispatchCore.setZkConnectionTimeoutMs(10000);
         dispatchCore.setHandlerGroup("yb");
         dispatchCore.setHandlers("demo");
         dispatchCore.setCoreSize(2);

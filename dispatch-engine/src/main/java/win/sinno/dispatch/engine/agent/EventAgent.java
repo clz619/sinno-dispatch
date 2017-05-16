@@ -55,8 +55,9 @@ public class EventAgent implements IAgent {
                         }
 
                         if (eventExecutorAgent.getCurrentExecHandlerIdentityCode() != server.getHandlerIdentityCode()) {
-                            Thread.sleep(3000);
+                            Thread.sleep(1000);
                             init();
+
                         }
                     } catch (Exception e) {
                         LOG.error(e.getMessage(), e);
@@ -65,6 +66,7 @@ public class EventAgent implements IAgent {
             }
 
             private void init() {
+
                 List<EventConfig> eventConfigs = new ArrayList<>();
 
                 Map<String, List<Integer>> hanlderMap = handlerServer.getHandlerRefNodeMap();
@@ -82,13 +84,14 @@ public class EventAgent implements IAgent {
 
                     eventConfigs.add(eventConfig);
                 }
+                LOG.info("event agent init..:{}", eventConfigs);
 
                 eventExecutorAgent.init(eventConfigs);
             }
         };
 
         eventAgentThread.setDaemon(true);
-        eventAgentThread.setName("EventAgent");
+        eventAgentThread.setName("EventAgent-Thread");
     }
 
 
