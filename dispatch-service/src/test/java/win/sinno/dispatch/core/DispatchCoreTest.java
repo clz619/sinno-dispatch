@@ -61,7 +61,7 @@ public class DispatchCoreTest {
 
     @Test
     public void testAddTask() throws InterruptedException {
-        for (int i = 1; i < 200; i++) {
+        for (int i = 1; i < 10000; i++) {
             Map<String, String> params = new HashMap<>();
             params.put("handlerGroup", "yb");
             params.put("handler", "demo");
@@ -86,7 +86,7 @@ public class DispatchCoreTest {
             Long ret = dispatchCore.addDispatchTask(dispatchTaskEntity);
             System.out.println("add dispatch task ret:" + ret);
 
-            Thread.sleep(10000l);
+            Thread.sleep(10);
         }
     }
 }
