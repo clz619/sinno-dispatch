@@ -2,6 +2,7 @@ package win.sinno.dispatch.engine.server;
 
 import win.sinno.dispatch.api.DispatchService;
 import win.sinno.dispatch.engine.agent.*;
+import win.sinno.dispatch.engine.dispatch.DispatchHandlerConverter;
 import win.sinno.dispatch.engine.dispatch.DispatchResultService;
 import win.sinno.dispatch.engine.repository.EventConsumerRepository;
 
@@ -45,9 +46,13 @@ public class HandlerServer implements IAgentManager {
     // dispatch result logic
     private DispatchResultService dispatchResultService;
 
+    // dispatch handler converter
+    private DispatchHandlerConverter dispatchHandlerConverter;
+
     private HandlerServerRunningData handlerServerRunningData = new HandlerServerRunningData();
 
     private EventConsumerRepository eventConsumerRepository = new EventConsumerRepository();
+
     /**
      * server agent manager
      */
@@ -256,6 +261,14 @@ public class HandlerServer implements IAgentManager {
 
     public void setDispatchResultService(DispatchResultService dispatchResultService) {
         this.dispatchResultService = dispatchResultService;
+    }
+
+    public DispatchHandlerConverter getDispatchHandlerConverter() {
+        return dispatchHandlerConverter;
+    }
+
+    public void setDispatchHandlerConverter(DispatchHandlerConverter dispatchHandlerConverter) {
+        this.dispatchHandlerConverter = dispatchHandlerConverter;
     }
 
     public EventConsumerRepository getEventConsumerRepository() {

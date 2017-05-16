@@ -4,6 +4,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import win.sinno.dispatch.api.DispatchTaskEntity;
+import win.sinno.dispatch.engine.dispatch.DispatchHandler;
+import win.sinno.dispatch.engine.dispatch.DispatchHandlerConverter;
 import win.sinno.dispatch.engine.repository.EventConsumerRepository;
 import win.sinno.dispatch.engine.server.HandlerServer;
 
@@ -32,6 +34,8 @@ public class EventExecutor {
 
     private EventExecutorAgent eventExecutorAgent;
 
+    private DispatchHandlerConverter dispatchHandlerConverter;
+
     private EventConsumerRepository eventConsumerRepository;
 
     private EventConfig eventConfig;
@@ -47,6 +51,7 @@ public class EventExecutor {
     public EventExecutor(HandlerServer handlerServer, EventExecutorAgent eventExecutorAgent, EventConfig eventConfig, EventFilter eventFilter, EventFetcher eventFetcher) {
         this.handlerServer = handlerServer;
         this.eventExecutorAgent = eventExecutorAgent;
+        this.dispatchHandlerConverter = handlerServer.getDispatchHandlerConverter();
         this.eventConsumerRepository = handlerServer.getEventConsumerRepository();
 
         this.eventConfig = eventConfig;
@@ -125,7 +130,11 @@ public class EventExecutor {
                     continue;
                 }
 
-                EventConsumer eventConsumer = EventConsumerFactory.create(handlerServer, eventExecutorAgent, dispatchTaskEntity, eventConfig);
+                String handler = dispatchTaskEntity.getHandler();
+
+                DispatchHandler dispatchHandler = dispatchHandlerConverter.converter(handler);
+
+                EventConsumer eventConsumer = new EventConsumer(handlerServer, eventExecutorAgent, dispatchTaskEntity, dispatchHandler, handlerServer.getDispatchResultService(), eventConfig.getHandlerIdentifyCode());
 
                 eventConsumerPool.execute(eventConsumer);
             } catch (Exception e) {

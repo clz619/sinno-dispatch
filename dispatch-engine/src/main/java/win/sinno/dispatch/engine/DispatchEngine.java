@@ -9,6 +9,7 @@ import win.sinno.dispatch.engine.agent.HanlderServerClusterStatusAgent;
 import win.sinno.dispatch.engine.agent.ZkNodeAgent;
 import win.sinno.dispatch.engine.constant.ServerProps;
 import win.sinno.dispatch.engine.constant.ZkProps;
+import win.sinno.dispatch.engine.dispatch.DispatchHandlerConverter;
 import win.sinno.dispatch.engine.dispatch.DispatchResultService;
 import win.sinno.dispatch.engine.server.HandlerServer;
 
@@ -113,6 +114,14 @@ public class DispatchEngine {
             handlerServer.setDispatchService(dispatchService);
         }
 
+        Object dhObj = properties.get(ServerProps.DISPATCH_HANDLER_CONVERTER);
+
+        if (dhObj != null) {
+            DispatchHandlerConverter dispatchHandlerConverter = (DispatchHandlerConverter) dhObj;
+
+            handlerServer.setDispatchHandlerConverter(dispatchHandlerConverter);
+        }
+
         handlerServer.setHandlerGroup(handlerGroup);
         handlerServer.setVirtualNodeNum(Integer.valueOf(virtualNodeNum));
         handlerServer.setHandelrCoreSize(Integer.valueOf(coreSize));
@@ -138,7 +147,6 @@ public class DispatchEngine {
         } catch (Exception ignore) {
             // ignore
         }
-
     }
 
     /**
@@ -147,7 +155,6 @@ public class DispatchEngine {
      * @throws Exception
      */
     private void startAgent() throws Exception {
-
         startZkNodeAgent();
 
         startClusterStatusAgent();

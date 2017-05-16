@@ -53,11 +53,16 @@ public class DispatchServiceImpl implements DispatchService {
         }
 
         DispatchTaskEntity bizTask = new DispatchTaskEntity();
+        bizTask.setId(dispatchTaskEntity.getId());
+        bizTask.setGmtCreate(dispatchTaskEntity.getGmtCreate());
         bizTask.setHandlerGroup(dispatchTaskEntity.getHandlerGroup());
         bizTask.setHandler(dispatchTaskEntity.getHandler());
         bizTask.setNode(dispatchTaskEntity.getNode());
+        bizTask.setLoadbalance(dispatchTaskEntity.getLoadbalance());
 
         bizTask.setRetryTime(0);
+        bizTask.setFailStrategy(dispatchTaskEntity.getFailStrategy());
+
         bizTask.setStatus(DispatchTaskEntityStatus.NEW.getCode());
         bizTask.setTraceId(dispatchTaskEntity.getTraceId());
 
@@ -72,6 +77,7 @@ public class DispatchServiceImpl implements DispatchService {
         } else {
             bizTask.setParameter(dispatchTaskEntity.getParameter());
         }
+        bizTask.setRemark(dispatchTaskEntity.getRemark());
 
         bizTask.setBizUniqueId(dispatchTaskEntity.getBizUniqueId());
 

@@ -123,4 +123,10 @@ public class DispatchParam {
         addProperty(HANDLER_GROUP, handlerGroup);
     }
 
+    @Override
+    public String toString() {
+        return "DispatchParam{" +
+                "properties=" + properties +
+                '}';
+    }
 }
