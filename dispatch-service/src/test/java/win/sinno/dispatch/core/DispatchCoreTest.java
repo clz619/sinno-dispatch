@@ -37,7 +37,7 @@ public class DispatchCoreTest {
         dispatchService = applicationContext.getBean(DispatchServiceImpl.class);
 
         dispatchCore.setPerFetchSleepTimeMs(1000);
-        dispatchCore.setPerFetchNum(100);
+        dispatchCore.setPerFetchNum(500);
         dispatchCore.setZkAddress("192.168.8.200:2181");
         dispatchCore.setZkNamespace("dispatch-agent");
         dispatchCore.setZkSessionTimeoutMs(10000);
@@ -45,7 +45,7 @@ public class DispatchCoreTest {
         dispatchCore.setHandlerGroup("yb");
         dispatchCore.setHandlers("demo");
         dispatchCore.setCoreSize(4);
-        dispatchCore.setMaxSize(32);
+        dispatchCore.setMaxSize(64);
         dispatchCore.setVirtualNodeNum(10);
         dispatchCore.setDivideType(1);
         dispatchCore.setDispatchService(dispatchService);
