@@ -23,8 +23,6 @@ import java.util.Map;
  */
 public class DispatchCoreTest {
 
-    private IdWorkerUtil idWorker = new IdWorkerUtil(1);
-
     private SpringLaunchContext springLaunch;
     private ApplicationContext applicationContext;
     private DispatchService dispatchService;
@@ -61,8 +59,9 @@ public class DispatchCoreTest {
     }
 
     @Test
-    public void testAddTask() throws InterruptedException {
-        for (int i = 1; i < 10000000; i++) {
+    public void testAddTask1() throws InterruptedException {
+        IdWorkerUtil idWorker = new IdWorkerUtil(1);
+        for (int i = 1; i < 20000000; i++) {
             Map<String, String> params = new HashMap<>();
             params.put("handlerGroup", "yb");
             params.put("handler", "demo");
@@ -85,9 +84,73 @@ public class DispatchCoreTest {
             dispatchTaskEntity.setRemark("test");
 
             Long ret = dispatchCore.addDispatchTask(dispatchTaskEntity);
-            System.out.println("add dispatch task ret:" + ret);
+            System.out.println("add dispatch task ret " + i + ":" + dispatchTaskEntity.getId() + ":" + ret);
 
-            Thread.sleep(10);
+            Thread.sleep(1);
+        }
+    }
+
+    @Test
+    public void testAddTask2() throws InterruptedException {
+        IdWorkerUtil idWorker = new IdWorkerUtil(2);
+        for (int i = 1; i < 20000000; i++) {
+            Map<String, String> params = new HashMap<>();
+            params.put("handlerGroup", "yb");
+            params.put("handler", "demo");
+            params.put("str", "hello:" + i);
+
+            Date now = new Date();
+            DispatchTaskEntity dispatchTaskEntity = new DispatchTaskEntity();
+            dispatchTaskEntity.setId(idWorker.nextId());
+            dispatchTaskEntity.setGmtCreate(now);
+            dispatchTaskEntity.setBizUniqueId("biz" + idWorker.nextId());
+            dispatchTaskEntity.setParameter(JsonUtil.toJson(params));
+            dispatchTaskEntity.setTraceId("" + idWorker.nextId());
+            dispatchTaskEntity.setHandlerGroup("yb");
+            dispatchTaskEntity.setHandler("demo");
+            dispatchTaskEntity.setLoadbalance(i);
+            dispatchTaskEntity.setStatus(0);
+            dispatchTaskEntity.setNextExecTime(now.getTime());
+            dispatchTaskEntity.setFailStrategy(0);
+            dispatchTaskEntity.setRetryTime(0);
+            dispatchTaskEntity.setRemark("test");
+
+            Long ret = dispatchCore.addDispatchTask(dispatchTaskEntity);
+            System.out.println("add dispatch task ret " + i + ":" + dispatchTaskEntity.getId() + ":" + ret);
+
+            Thread.sleep(1);
+        }
+    }
+
+    @Test
+    public void testAddTask3() throws InterruptedException {
+        IdWorkerUtil idWorker = new IdWorkerUtil(3);
+        for (int i = 1; i < 20000000; i++) {
+            Map<String, String> params = new HashMap<>();
+            params.put("handlerGroup", "yb");
+            params.put("handler", "demo");
+            params.put("str", "hello:" + i);
+
+            Date now = new Date();
+            DispatchTaskEntity dispatchTaskEntity = new DispatchTaskEntity();
+            dispatchTaskEntity.setId(idWorker.nextId());
+            dispatchTaskEntity.setGmtCreate(now);
+            dispatchTaskEntity.setBizUniqueId("biz" + idWorker.nextId());
+            dispatchTaskEntity.setParameter(JsonUtil.toJson(params));
+            dispatchTaskEntity.setTraceId("" + idWorker.nextId());
+            dispatchTaskEntity.setHandlerGroup("yb");
+            dispatchTaskEntity.setHandler("demo");
+            dispatchTaskEntity.setLoadbalance(i);
+            dispatchTaskEntity.setStatus(0);
+            dispatchTaskEntity.setNextExecTime(now.getTime());
+            dispatchTaskEntity.setFailStrategy(0);
+            dispatchTaskEntity.setRetryTime(0);
+            dispatchTaskEntity.setRemark("test");
+
+            Long ret = dispatchCore.addDispatchTask(dispatchTaskEntity);
+            System.out.println("add dispatch task ret " + i + ":" + dispatchTaskEntity.getId() + ":" + ret);
+
+            Thread.sleep(1);
         }
     }
 }
