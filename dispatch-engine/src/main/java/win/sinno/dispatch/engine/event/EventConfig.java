@@ -47,4 +47,13 @@ public class EventConfig {
     public void setHandlerIdentifyCode(Integer handlerIdentifyCode) {
         this.handlerIdentifyCode = handlerIdentifyCode;
     }
+
+    @Override
+    public String toString() {
+        return "EventConfig{" +
+                "handler='" + handler + '\'' +
+                ", nodeList=" + nodeList +
+                ", handlerIdentifyCode=" + handlerIdentifyCode +
+                '}';
+    }
 }

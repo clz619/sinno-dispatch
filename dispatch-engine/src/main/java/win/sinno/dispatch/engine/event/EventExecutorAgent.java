@@ -95,6 +95,8 @@ public class EventExecutorAgent {
             return;
         }
 
+        LOG.info("event executor agent init . event config:{}", new Object[]{eventConfigs});
+        
         lock.lock();
         try {
             EventConfig eventConfig = eventConfigs.get(0);

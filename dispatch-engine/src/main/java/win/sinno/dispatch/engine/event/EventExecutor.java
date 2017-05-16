@@ -93,7 +93,7 @@ public class EventExecutor {
 
         try {
             if (!handlerServer.isCanRunning()) {
-                LOG.info("schedule server disable schedule.");
+                LOG.info("handlder server un run.");
                 return;
             }
 

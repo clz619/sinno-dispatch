@@ -76,6 +76,7 @@
                     #{item}
                 </foreach>
             </if>
+            AND status = 0
         </where>
         ORDER BY gmt_create ASC
         <if test="limit!=null">LIMIT #{limit}</if>

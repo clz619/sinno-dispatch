@@ -78,7 +78,7 @@ public class DispatchEngine {
         }
 
         // handler 的标识
-        handlerServer.setHandlerIdentifyCode(handlerList.hashCode());
+        // handlerServer.setHandlerIdentifyCode(handlerList.hashCode());
 
         String zkNamespace = properties.getProperty(ZkProps.ZK_NAMESPACE);
 

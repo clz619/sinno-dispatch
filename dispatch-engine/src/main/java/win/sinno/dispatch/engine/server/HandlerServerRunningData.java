@@ -45,7 +45,7 @@ public class HandlerServerRunningData {
     private int status;
 
     // 处理器 识别码
-    private AtomicInteger handlerIdentifyCode = new AtomicInteger(0);
+    private volatile AtomicInteger handlerIdentifyCode = new AtomicInteger(0);
 
     private Set<String> handlerSet = new CopyOnWriteArraySet<>();
 

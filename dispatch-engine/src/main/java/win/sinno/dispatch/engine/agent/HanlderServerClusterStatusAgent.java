@@ -56,7 +56,7 @@ public class HanlderServerClusterStatusAgent implements IAgent {
                             continue;
                         }
 
-                        //machine register path 's server
+                        // machine register path 's server
                         List<String> serverList = zkNodeAgent.getChildrenForPath(zkRootPath);
                         if (CollectionUtils.isEmpty(serverList)) {
                             LOG.warn("HandlerServer init ok,but serverList is empty. path:" + zkRootPath);
@@ -85,7 +85,7 @@ public class HanlderServerClusterStatusAgent implements IAgent {
                             // current register version
                             String registerData = currentRegisterVersion;
 
-                            //更新当前节点远程zk的版本号
+                            // 更新当前节点远程zk的版本号
                             zkNodeAgent.setDataForPath(currentNodePath, registerData);
 
                             // check 集群中机器的版本号是否都更新完成
@@ -108,7 +108,7 @@ public class HanlderServerClusterStatusAgent implements IAgent {
                             }
 
                             if (hasReady) {
-                                //更新本机注册版本
+                                // 更新本机注册版本
                                 List<String> handlers = new ArrayList<>();
                                 Set<String> handlerSet = handlerServer.getHandlerSet();
 
@@ -118,16 +118,17 @@ public class HanlderServerClusterStatusAgent implements IAgent {
                                 }
                                 handlers.addAll(handlerSet);
 
-                                //获取新的节点
+                                // 获取新的节点
                                 List<Integer> newNodeList = getNodeList(serverList);
 
                                 // 注册
                                 registerContext(currentRegisterVersion, newNodeList);
 
                                 if (CollectionUtils.isEmpty(newNodeList)) {
-                                    //有可能节点启动太多，该节点没有分配到虚拟处理节点，返回不启动执行器
+                                    // 有可能节点启动太多，该节点没有分配到虚拟处理节点，返回不启动执行器
                                     continue;
                                 }
+
                                 handlerServer.setNodeList(newNodeList);
                                 handlerServer.clearAllHandler();
                                 for (String handler : handlers) {
@@ -135,11 +136,11 @@ public class HanlderServerClusterStatusAgent implements IAgent {
                                 }
                                 handlerServer.setHandlerIdentifyCode(handlers.hashCode());
 
-                                //注册变更
-                                LOG.info("###register version changed, handler constructed with new nodelist:{},registerVersion:{},registerTime:{}"
-                                        , new Object[]{newNodeList, handlerServer.getRegisterVersion(), handlerServer.getRegisterTime()});
+                                // 注册变更
+                                LOG.info("###register version changed, handler constructed with new nodelist:{},registerVersion:{},registerTime:{},handerIdentifyCode:{}"
+                                        , new Object[]{newNodeList, handlerServer.getRegisterVersion(), handlerServer.getRegisterTime(), handlerServer.getHandlerIdentityCode()});
 
-                                //启动执行器
+                                // 启动执行器
                                 handlerServer.startRunning();
                             }
                         }
@@ -179,10 +180,10 @@ public class HanlderServerClusterStatusAgent implements IAgent {
         int index = serverList.indexOf(handlerServer.getHostname());
 
         if (index == -1) {
-            //不包含本机
+            // 不包含本机
             return nodeList;
         }
-        //散列模式
+        // 散列模式
         int numOfVisualNode = handlerServer.getVirtualNodeNum();
 
         for (int i = index; i < numOfVisualNode; i += serverList.size()) {
