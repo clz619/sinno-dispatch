@@ -13,6 +13,7 @@ import win.sinno.dispatch.service.spring.SpringLaunchContext;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * dispatch core agent test
@@ -61,7 +62,16 @@ public class DispatchCoreTest {
     @Test
     public void testAddTask1() throws InterruptedException {
         IdWorkerUtil idWorker = new IdWorkerUtil(1);
-        for (int i = 1; i < 20000000; i++) {
+        long b = System.currentTimeMillis();
+        long e = 0;
+        AtomicInteger i = new AtomicInteger(0);
+        while (true) {
+            e = System.currentTimeMillis();
+            if ((e - b) > 10000) {
+                System.out.println("10s create count:" + i.get());
+                i.set(0);
+                b = e;
+            }
             Map<String, String> params = new HashMap<>();
             params.put("handlerGroup", "yb");
             params.put("handler", "demo");
@@ -76,7 +86,7 @@ public class DispatchCoreTest {
             dispatchTaskEntity.setTraceId("" + idWorker.nextId());
             dispatchTaskEntity.setHandlerGroup("yb");
             dispatchTaskEntity.setHandler("demo");
-            dispatchTaskEntity.setLoadbalance(i);
+            dispatchTaskEntity.setLoadbalance(i.incrementAndGet());
             dispatchTaskEntity.setStatus(0);
             dispatchTaskEntity.setNextExecTime(now.getTime());
             dispatchTaskEntity.setFailStrategy(0);
@@ -84,16 +94,26 @@ public class DispatchCoreTest {
             dispatchTaskEntity.setRemark("test");
 
             Long ret = dispatchCore.addDispatchTask(dispatchTaskEntity);
-            System.out.println("add dispatch task ret " + i + ":" + dispatchTaskEntity.getId() + ":" + ret);
+//            System.out.println("add dispatch task ret " + i + ":" + dispatchTaskEntity.getId() + ":" + ret);
 
             Thread.sleep(1);
         }
+
     }
 
     @Test
     public void testAddTask2() throws InterruptedException {
         IdWorkerUtil idWorker = new IdWorkerUtil(2);
-        for (int i = 1; i < 20000000; i++) {
+        long b = System.currentTimeMillis();
+        long e = 0;
+        AtomicInteger i = new AtomicInteger(0);
+        while (true) {
+            e = System.currentTimeMillis();
+            if ((e - b) > 10000) {
+                System.out.println("10s create count:" + i.get());
+                i.set(0);
+                b = e;
+            }
             Map<String, String> params = new HashMap<>();
             params.put("handlerGroup", "yb");
             params.put("handler", "demo");
@@ -108,7 +128,7 @@ public class DispatchCoreTest {
             dispatchTaskEntity.setTraceId("" + idWorker.nextId());
             dispatchTaskEntity.setHandlerGroup("yb");
             dispatchTaskEntity.setHandler("demo");
-            dispatchTaskEntity.setLoadbalance(i);
+            dispatchTaskEntity.setLoadbalance(i.incrementAndGet());
             dispatchTaskEntity.setStatus(0);
             dispatchTaskEntity.setNextExecTime(now.getTime());
             dispatchTaskEntity.setFailStrategy(0);
@@ -116,7 +136,7 @@ public class DispatchCoreTest {
             dispatchTaskEntity.setRemark("test");
 
             Long ret = dispatchCore.addDispatchTask(dispatchTaskEntity);
-            System.out.println("add dispatch task ret " + i + ":" + dispatchTaskEntity.getId() + ":" + ret);
+//            System.out.println("add dispatch task ret " + i + ":" + dispatchTaskEntity.getId() + ":" + ret);
 
             Thread.sleep(1);
         }
@@ -125,7 +145,16 @@ public class DispatchCoreTest {
     @Test
     public void testAddTask3() throws InterruptedException {
         IdWorkerUtil idWorker = new IdWorkerUtil(3);
-        for (int i = 1; i < 20000000; i++) {
+        long b = System.currentTimeMillis();
+        long e = 0;
+        AtomicInteger i = new AtomicInteger(0);
+        while (true) {
+            e = System.currentTimeMillis();
+            if ((e - b) > 10000) {
+                System.out.println("10s create count:" + i.get());
+                i.set(0);
+                b = e;
+            }
             Map<String, String> params = new HashMap<>();
             params.put("handlerGroup", "yb");
             params.put("handler", "demo");
@@ -140,7 +169,7 @@ public class DispatchCoreTest {
             dispatchTaskEntity.setTraceId("" + idWorker.nextId());
             dispatchTaskEntity.setHandlerGroup("yb");
             dispatchTaskEntity.setHandler("demo");
-            dispatchTaskEntity.setLoadbalance(i);
+            dispatchTaskEntity.setLoadbalance(i.incrementAndGet());
             dispatchTaskEntity.setStatus(0);
             dispatchTaskEntity.setNextExecTime(now.getTime());
             dispatchTaskEntity.setFailStrategy(0);
@@ -148,7 +177,7 @@ public class DispatchCoreTest {
             dispatchTaskEntity.setRemark("test");
 
             Long ret = dispatchCore.addDispatchTask(dispatchTaskEntity);
-            System.out.println("add dispatch task ret " + i + ":" + dispatchTaskEntity.getId() + ":" + ret);
+//            System.out.println("add dispatch task ret " + i + ":" + dispatchTaskEntity.getId() + ":" + ret);
 
             Thread.sleep(1);
         }

@@ -78,6 +78,16 @@ public class DispatchResultService {
                     if (!flag) {
                         LOG.warn("task:({}) executr failed,update retry time failed", new Object[]{dispatchTaskEntity});
                     }
+
+                } else {
+                    LOG.info("");
+
+                    flag = dispatchTaskService.updateTaskStatus(dispatchTaskEntity.getId()
+                            , DispatchTaskEntityStatus.FAIL.getCode(), taskAttribute);
+
+                    if (!flag) {
+                        LOG.warn("task:({}) executr failed,update status failed", new Object[]{dispatchTaskEntity});
+                    }
                 }
                 break;
 
