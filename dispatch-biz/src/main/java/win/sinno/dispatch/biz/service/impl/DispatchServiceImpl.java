@@ -53,7 +53,9 @@ public class DispatchServiceImpl implements DispatchService {
             return Collections.emptyList();
         }
 
-        List<win.sinno.dispatch.biz.model.DispatchTaskEntity> dispatchTaskEntities = dispatchTaskEntityDao.selectWithLimit(handlerGroup, nodes, limit);
+        Long nowTs = System.currentTimeMillis();
+
+        List<win.sinno.dispatch.biz.model.DispatchTaskEntity> dispatchTaskEntities = dispatchTaskEntityDao.selectWithLimit(handlerGroup, nodes, nowTs, limit);
 
         if (CollectionUtils.isEmpty(dispatchTaskEntities)) {
             return Collections.emptyList();

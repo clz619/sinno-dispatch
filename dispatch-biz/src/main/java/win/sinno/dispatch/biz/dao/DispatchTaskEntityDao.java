@@ -17,7 +17,7 @@ import java.util.List;
 @MybatisRepository
 public interface DispatchTaskEntityDao extends IDao<DispatchTaskEntity> {
 
-    List<DispatchTaskEntity> selectWithLimit(@Param("handlerGroup") String handlerGroup, @Param("nodes") List<Integer> nodes, @Param("limit") Integer limit);
+    List<DispatchTaskEntity> selectWithLimit(@Param("handlerGroup") String handlerGroup, @Param("nodes") List<Integer> nodes, @Param("nowExecTs") Long nowExecTs, @Param("limit") Integer limit);
 
     Long updateStatusByIdAndHandlerGroup(@Param("id") Long taskId, @Param("handlerGroup") String handlerGroup, @Param("status") Integer status);
 
