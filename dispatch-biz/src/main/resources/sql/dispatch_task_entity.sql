@@ -23,3 +23,4 @@ ALTER TABLE `dispatch_task_entity` ADD INDEX idx_dte_handlergroup_id(handler_gro
 ALTER TABLE `dispatch_task_entity` ADD INDEX idx_dte_handlergroup_bizid(handler_group,biz_unique_id);
 ALTER TABLE `dispatch_task_entity` ADD INDEX idx_dte_handlergroup_node(handler_group,node);
 ALTER TABLE `dispatch_task_entity` ADD INDEX idx_dte_handlergroup_node_status(handler_group,node,status);
+ALTER TABLE `dispatch_task_entity` ADD INDEX idx_dte_status(status);

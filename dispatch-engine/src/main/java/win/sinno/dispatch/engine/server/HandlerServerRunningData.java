@@ -1,6 +1,7 @@
 package win.sinno.dispatch.engine.server;
 
 import win.sinno.common.util.NetworkUtil;
+import win.sinno.common.util.RuntimeUtil;
 import win.sinno.dispatch.engine.constant.ServerProps;
 
 import java.net.UnknownHostException;
@@ -63,6 +64,7 @@ public class HandlerServerRunningData {
     {
         try {
             hostname = NetworkUtil.getHostName();
+            hostname += "@" + RuntimeUtil.getRunPid();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
