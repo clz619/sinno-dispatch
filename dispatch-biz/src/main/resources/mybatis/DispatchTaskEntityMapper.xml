@@ -77,7 +77,7 @@
                 </foreach>
             </if>
             AND status = 0
-            AND next_exec_time &lt;
+            AND next_exec_time &lt; #{nowExecTs}
         </where>
         ORDER BY gmt_create ASC
         <if test="limit!=null">LIMIT #{limit}</if>
