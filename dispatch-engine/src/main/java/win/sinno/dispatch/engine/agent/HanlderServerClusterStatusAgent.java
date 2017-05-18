@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class HanlderServerClusterStatusAgent implements IAgent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HanlderServerClusterStatusAgent.class);
+    private static final Logger LOG = LoggerFactory.getLogger("dispatch");
 
     private HandlerServer handlerServer;
 

@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class ZkNodeAgent implements IAgent {
 
-    private static final Logger LOG = LoggerFactory.getLogger("dispatch-engine");
+    private static final Logger LOG = LoggerFactory.getLogger("dispatch");
 
     private HandlerServerZkConf handlerServerZkConf;
 

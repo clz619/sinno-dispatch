@@ -99,6 +99,31 @@ public class DispatchCore {
     }
 
     /**
+     * 添加properties
+     *
+     * @param properties
+     */
+    public void addProperties(Properties properties) {
+        if (properties == null) {
+            return;
+        }
+
+        this.properties.putAll(properties);
+    }
+
+    /**
+     * @param key
+     * @param val
+     */
+    public void addProperty(String key, Object val) {
+        this.properties.put(key, val);
+    }
+
+    public void clearProperties() {
+        this.properties.clear();
+    }
+
+    /**
      * 启动引擎
      */
     public void startEngine() throws Exception {
