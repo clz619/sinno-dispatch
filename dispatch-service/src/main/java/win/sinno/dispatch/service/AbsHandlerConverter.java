@@ -2,7 +2,6 @@ package win.sinno.dispatch.service;
 
 import win.sinno.dispatch.engine.dispatch.DispatchHandler;
 import win.sinno.dispatch.engine.dispatch.DispatchHandlerConverter;
-import win.sinno.dispatch.engine.dispatch.UnknowDispatchHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +13,7 @@ import java.util.Map;
  * @version : 1.0
  * @since : 2017/5/16 14:29
  */
-public class HandlerConverter implements DispatchHandlerConverter {
+public abstract class AbsHandlerConverter implements DispatchHandlerConverter {
 
     private Map<String, DispatchHandler> handlerMap = new HashMap<>();
 
@@ -44,11 +43,5 @@ public class HandlerConverter implements DispatchHandlerConverter {
         return dispatchHandler;
     }
 
-    private DispatchHandler get(String handler) {
-        if ("demo".equals(handler)) {
-            return new DemoHandler();
-        }
-
-        return new UnknowDispatchHandler();
-    }
+    public abstract DispatchHandler get(String handler);
 }

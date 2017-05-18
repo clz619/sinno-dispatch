@@ -7,7 +7,7 @@ import win.sinno.common.util.JsonUtil;
 import win.sinno.dispatch.api.DispatchService;
 import win.sinno.dispatch.api.DispatchTaskEntity;
 import win.sinno.dispatch.core.service.impl.DispatchServiceImpl;
-import win.sinno.dispatch.service.HandlerConverter;
+import win.sinno.dispatch.service.DemoHandlerConverter;
 import win.sinno.dispatch.service.spring.SpringLaunchContext;
 
 import java.util.Date;
@@ -48,7 +48,7 @@ public class DispatchCoreTest {
         dispatchCore.setVirtualNodeNum(10);
         dispatchCore.setDivideType(1);
         dispatchCore.setDispatchService(dispatchService);
-        dispatchCore.setDispatchHandlerConverter(new HandlerConverter());
+        dispatchCore.setDispatchHandlerConverter(new DemoHandlerConverter());
     }
 
 

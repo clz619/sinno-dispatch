@@ -1,7 +1,7 @@
 
 CREATE TABLE `dispatch_task_entity`(
   `id` BIGINT(20) NOT NULL COMMENT 'id',
-  `gmt_create` TIMESTAMP NOT NULL DEFAULT now()  COMMENT '创建时间',
+  `gmt_create` TIMESTAMP NOT NULL DEFAULT '2000-01-01 00:00:00' COMMENT '创建时间',
   `gmt_modified` TIMESTAMP NOT NULL DEFAULT now() ON UPDATE now() COMMENT '修改时间',
   `biz_unique_id` VARCHAR(32) NOT NULL COMMENT '业务唯一id',
   `parameter` VARCHAR(512) NOT NULL COMMENT '参数',
@@ -18,10 +18,9 @@ CREATE TABLE `dispatch_task_entity`(
   PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 ALTER TABLE `dispatch_task_entity` ADD UNIQUE KEY uiq_dte_bizid(biz_unique_id);
-ALTER TABLE `dispatch_task_entity` ADD UNIQUE KEY uiq_dte_traceid(trace_id);
 ALTER TABLE `dispatch_task_entity` ADD INDEX idx_dte_handlergroup_id(handler_group,id);
 ALTER TABLE `dispatch_task_entity` ADD INDEX idx_dte_handlergroup_bizid(handler_group,biz_unique_id);
 ALTER TABLE `dispatch_task_entity` ADD INDEX idx_dte_status(status);
-ALTER TABLE `dispatch_task_entity` ADD INDEX idx_dte_handlergroup_node_status(handler_group,node,status);
 ALTER TABLE `dispatch_task_entity` ADD INDEX idx_dte_handlergroup_node_status_nxts(handler_group,node,status,next_exec_time);
 
+ALTER TABLE `dispatch_task_entity` ADD UNIQUE KEY uiq_dte_traceid(trace_id);
