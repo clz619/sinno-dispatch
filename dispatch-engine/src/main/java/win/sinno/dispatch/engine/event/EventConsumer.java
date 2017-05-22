@@ -103,20 +103,19 @@ public class EventConsumer implements Runnable {
             }
 
             EventThreadContext.put("traceId", traceId);
-            //分配参数
+
             DispatchParam dispatchParam = new DispatchParam();
             dispatchParam.setTraceId(traceId);
             dispatchParam.setTaskId(dispatchTaskEntity.getId());
             dispatchParam.setTaskNode(dispatchTaskEntity.getNode());
             dispatchParam.setHandlerGroup(dispatchTaskEntity.getHandlerGroup());
             dispatchParam.setRetryTime(dispatchTaskEntity.getRetryTime());
-            //业务参数
             dispatchParam.setBizParam(dispatchTaskEntity.getParameter());
 
             long start = System.currentTimeMillis();
             result = dispatchHandler.invoke(dispatchParam);
             long end = System.currentTimeMillis();
-            // 调用间隔
+
             long duration = end - start;
 
         } catch (Exception e) {

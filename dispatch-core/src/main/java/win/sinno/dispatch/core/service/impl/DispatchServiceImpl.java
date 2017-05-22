@@ -136,7 +136,6 @@ public class DispatchServiceImpl implements DispatchService {
         }
 
         return dispatchBizService.addRetryTimesByFail(taskId, nextExecuteTime, taskAttribute);
-
     }
 
     /**

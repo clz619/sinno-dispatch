@@ -97,6 +97,15 @@ public class EventExecutor {
                 return;
             }
 
+            int queueSize = eventConsumerPool.getQueue().size();
+
+            if (queueSize > 500) {
+                LOG.warn("event consumer pool queue size:{}>500,to next fetch task...", new Object[]{queueSize});
+                return;
+            } else {
+                LOG.info("event consumer pool queue size:{}", new Object[]{queueSize});
+            }
+
             List<DispatchTaskEntity> dispatchTaskEntities = eventFetcher.getTask(eventConfig.getNodeList());
 
             if (CollectionUtils.isEmpty(dispatchTaskEntities)) {
@@ -108,6 +117,7 @@ public class EventExecutor {
                 );
                 return;
             }
+
 
             dispatchTasks(dispatchTaskEntities);
         } catch (Exception e) {
@@ -127,6 +137,7 @@ public class EventExecutor {
             try {
                 // repo check if not contain to add
                 if (!eventFilter.isAccept(dispatchTaskEntity.getId())) {
+//                    LOG
                     continue;
                 }
 

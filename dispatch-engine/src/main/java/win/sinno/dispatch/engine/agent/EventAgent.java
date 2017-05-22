@@ -47,7 +47,7 @@ public class EventAgent implements IAgent {
                         }
 
                         if (eventExecutorAgent.isInit()) {
-                            // 轮询时间
+                            //TODO
                             Thread.sleep(server.getPerFetchSleepTimeMs());
                         } else {
                             Thread.sleep(1000);

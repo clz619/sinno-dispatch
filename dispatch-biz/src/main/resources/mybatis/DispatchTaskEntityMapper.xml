@@ -79,7 +79,7 @@
             AND status = 0
             AND next_exec_time &lt; #{nowExecTs}
         </where>
-        ORDER BY gmt_create ASC
+        ORDER BY next_exec_time ASC
         <if test="limit!=null">LIMIT #{limit}</if>
     </select>
 
@@ -259,6 +259,5 @@
         <include refid="table"/>
         WHERE id = #{id}
     </delete>
-
 
 </mapper>

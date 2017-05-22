@@ -24,4 +24,5 @@ public interface DispatchTaskEntityDao extends IDao<DispatchTaskEntity> {
     Long updateStatusByBizIdAndHandlerGroup(@Param("bizUniqueId") String bizUniqueId, @Param("handlerGroup") String handlerGroup, @Param("status") Integer status);
 
     Long updateNextExecTimeAndIncrRetryTime(@Param("id") Long taskId, @Param("nextExecTime") Long nextExecTime);
+
 }

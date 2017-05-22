@@ -43,7 +43,7 @@ public class EventExecutorAgent {
 
         this.eventConsumerRepository = handlerServer.getEventConsumerRepository();
 
-        eventExecutorThreadPool = new ThreadPoolExecutor(4, 16, 10l, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(10000)
+        eventExecutorThreadPool = new ThreadPoolExecutor(4, 32, 1000l, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(5000)
                 , new ThreadFactory() {
 
             AtomicInteger index = new AtomicInteger();

@@ -29,11 +29,13 @@ public class DemoHandler implements DispatchHandler {
 
         long taskId = dispatchParam.getTaskId();
 
-        LOG.info("start exec taskId:{}", new Object[]{taskId});
+//        LOG.info("start exec taskId:{}", new Object[]{taskId});
 
         String params = dispatchParam.getBizParams();
 
         LOG.info("finish exec taskId:{},params:{}", new Object[]{taskId, params});
+
+        Thread.sleep(2000l);
 
         return DispatchResult.SUCCESS;
     }
