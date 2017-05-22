@@ -34,6 +34,12 @@
         </dependency>
 
         <dependency>
+            <groupId>win.sinno</groupId>
+            <artifactId>sinno-concurrent</artifactId>
+            <version>${version.sinno.concurrent}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
             <version>${version.curator}</version>

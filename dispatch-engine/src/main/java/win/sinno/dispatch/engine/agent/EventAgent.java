@@ -37,6 +37,8 @@ public class EventAgent implements IAgent {
             public void run() {
                 while (true) {
                     try {
+                        long sleepTs = 1000l;
+
                         if (server.isCanRunning()) {
                             if (!eventExecutorAgent.isInit()) {
                                 init();
@@ -44,13 +46,13 @@ public class EventAgent implements IAgent {
 
                             // 丢线程执行事件
                             eventExecutorAgent.execute();
+
+                            sleepTs = server.getPerFetchSleepTimeMs();
                         }
 
-                        if (eventExecutorAgent.isInit()) {
-                            //TODO
-                            Thread.sleep(server.getPerFetchSleepTimeMs());
-                        } else {
-                            Thread.sleep(1000);
+                        Thread.sleep(sleepTs);
+
+                        if (!eventExecutorAgent.isInit()) {
                             continue;
                         }
 

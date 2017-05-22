@@ -1,5 +1,6 @@
 package win.sinno.dispatch.engine.server;
 
+import win.sinno.concurrent.earthworm.DataQueueCenter;
 import win.sinno.dispatch.api.DispatchService;
 import win.sinno.dispatch.engine.agent.*;
 import win.sinno.dispatch.engine.dispatch.DispatchHandlerConverter;
@@ -59,6 +60,12 @@ public class HandlerServer implements IAgentManager {
      * server agent manager
      */
     private ServerAgentManager serverAgentManager = new ServerAgentManager();
+
+    private DataQueueCenter dataQueueCenter = new DataQueueCenter();
+
+    public DataQueueCenter getDataQueueCenter() {
+        return dataQueueCenter;
+    }
 
     public String getZkAddress() {
         return this.handlerServerZkConf.getZkAddress();

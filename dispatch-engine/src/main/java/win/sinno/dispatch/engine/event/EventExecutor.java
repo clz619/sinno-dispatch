@@ -3,6 +3,11 @@ package win.sinno.dispatch.engine.event;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import win.sinno.concurrent.earthworm.DataQueueCenter;
+import win.sinno.concurrent.earthworm.DataQueueTeam;
+import win.sinno.concurrent.earthworm.custom.AbsDataTeamConf;
+import win.sinno.concurrent.earthworm.custom.IDataHandler;
+import win.sinno.concurrent.earthworm.custom.IDataTeamConf;
 import win.sinno.dispatch.api.DispatchTaskEntity;
 import win.sinno.dispatch.engine.dispatch.DispatchHandler;
 import win.sinno.dispatch.engine.dispatch.DispatchHandlerConverter;
@@ -10,11 +15,6 @@ import win.sinno.dispatch.engine.repository.EventConsumerRepository;
 import win.sinno.dispatch.engine.server.HandlerServer;
 
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -44,9 +44,15 @@ public class EventExecutor {
 
     private EventFetcher eventFetcher;
 
-    private ThreadPoolExecutor eventConsumerPool;
-
     private final ReentrantLock lock = new ReentrantLock();
+
+    private DataQueueCenter dataQueueCenter;
+
+    private IDataTeamConf<EventConsumer> eventDataTeamConf;
+
+    private IDataHandler<EventConsumer> eventDataHandler;
+
+    private DataQueueTeam<EventConsumer> eventQueueTeam;
 
     public EventExecutor(HandlerServer handlerServer, EventExecutorAgent eventExecutorAgent, EventConfig eventConfig, EventFilter eventFilter, EventFetcher eventFetcher) {
         this.handlerServer = handlerServer;
@@ -62,22 +68,37 @@ public class EventExecutor {
         final String handlerNameTemp = handlerName;
 
         int coreSize = handlerServer.getHandelrCoreSize();
-        int maxSize = handlerServer.getHandlerMaxSize();
+        final int maxSize = handlerServer.getHandlerMaxSize();
 
-        // 时间执行线程池
-        this.eventConsumerPool = new ThreadPoolExecutor(coreSize, maxSize, 30L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(10000), new ThreadFactory() {
-            AtomicInteger index = new AtomicInteger();
+        this.dataQueueCenter = handlerServer.getDataQueueCenter();
+
+        this.eventDataHandler = new IDataHandler<EventConsumer>() {
+            @Override
+            public void handler(EventConsumer eventConsumer) throws InterruptedException {
+                eventConsumer.run();
+            }
+        };
+
+        this.eventDataTeamConf = new AbsDataTeamConf<EventConsumer>() {
 
             @Override
-            public Thread newThread(Runnable r) {
-                // thread
-                Thread thread = new Thread(r);
-                thread.setDaemon(true);
-                thread.setName(handlerNameTemp + "#" + index.incrementAndGet());
-                return thread;
+            public String getTeamName(EventConsumer eventConsumer) {
+                return "EventExecutor#" + handlerNameTemp;
             }
-        });
+
+            @Override
+            public IDataHandler<EventConsumer> getDataHandler() {
+                return eventDataHandler;
+            }
+
+            @Override
+            public int getWorkerNum() {
+                return maxSize;
+            }
+        };
+
+        this.eventQueueTeam = this.dataQueueCenter.createDataQueueTeam(handlerNameTemp, eventDataTeamConf);
+
     }
 
     public void doWork() {
@@ -97,14 +118,14 @@ public class EventExecutor {
                 return;
             }
 
-            int queueSize = eventConsumerPool.getQueue().size();
+            int queueSize = this.eventQueueTeam.getTaskCount();
 
-//            if (queueSize > 500) {
-//                LOG.warn("event consumer pool queue size:{}>500,to next fetch task...", new Object[]{queueSize});
-//                return;
-//            } else {
+            if (queueSize > 200) {
+                LOG.warn("event consumer pool queue size:{}>200,to next fetch task...", new Object[]{queueSize});
+                return;
+            } else {
                 LOG.info("event consumer pool queue size:{}", new Object[]{queueSize});
-//            }
+            }
 
             List<DispatchTaskEntity> dispatchTaskEntities = eventFetcher.getTask(eventConfig.getNodeList());
 
@@ -137,7 +158,6 @@ public class EventExecutor {
             try {
                 // repo check if not contain to add
                 if (!eventFilter.isAccept(dispatchTaskEntity.getId())) {
-//                    LOG
                     continue;
                 }
 
@@ -147,7 +167,8 @@ public class EventExecutor {
 
                 EventConsumer eventConsumer = new EventConsumer(handlerServer, eventExecutorAgent, dispatchTaskEntity, dispatchHandler, handlerServer.getDispatchResultService(), eventConfig.getHandlerIdentifyCode());
 
-                eventConsumerPool.execute(eventConsumer);
+                //queue team add task
+                eventQueueTeam.addTask(eventConsumer);
             } catch (Exception e) {
                 LOG.error(e.getMessage(), e);
                 // repo remove
@@ -162,7 +183,7 @@ public class EventExecutor {
     public void clearInReadyRunningQueue() {
         lock.lock();
         try {
-            this.eventConsumerPool.getQueue().clear();
+            this.eventQueueTeam.clearTask();
         } finally {
             lock.unlock();
         }
