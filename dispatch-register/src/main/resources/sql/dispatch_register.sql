@@ -1,7 +1,7 @@
 
 CREATE TABLE `dispatch_register`(
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `gmt_create` TIMESTAMP NOT NULL DEFAULT now()  COMMENT '创建时间',
+  `gmt_create` TIMESTAMP NOT NULL DEFAULT '2000-01-01 00:00:00' COMMENT '创建时间',
   `gmt_modified` TIMESTAMP NOT NULL DEFAULT now() ON UPDATE now() COMMENT '修改时间',
   `handler_group` VARCHAR(32) NOT NULL COMMENT '处理群组',
   `hostname` VARCHAR(128) NOT NULL COMMENT '机器名',

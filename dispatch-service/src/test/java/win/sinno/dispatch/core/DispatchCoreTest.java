@@ -2,17 +2,22 @@ package win.sinno.dispatch.core;
 
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+import sun.misc.URLClassPath;
 import win.sinno.common.util.IdWorkerUtil;
 import win.sinno.common.util.JsonUtil;
+import win.sinno.common.util.PropertiesUtil;
 import win.sinno.dispatch.api.DispatchService;
 import win.sinno.dispatch.api.DispatchTaskEntity;
 import win.sinno.dispatch.core.service.impl.DispatchServiceImpl;
 import win.sinno.dispatch.service.DemoHandlerConverter;
 import win.sinno.dispatch.service.spring.SpringLaunchContext;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -181,5 +186,22 @@ public class DispatchCoreTest {
 
             Thread.sleep(1);
         }
+    }
+
+    @Test
+    public void testClassPath() throws IOException {
+        URLClassPath urlc = sun.misc.Launcher.getBootstrapClassPath();
+        URL[] urls = urlc.getURLs();
+        for (URL u : urls) {
+            System.out.println(u);
+        }
+
+        System.out.println(".............");
+
+        Properties serverProps =
+                PropertiesUtil.loadFromResources("server.properties");
+
+        System.out.println(serverProps);
+
     }
 }

@@ -34,10 +34,6 @@ public class DispatchServiceImpl implements DispatchService {
     @Qualifier("bizDispatchService")
     private DispatchService dispatchBizService;
 
-    public DispatchServiceImpl(DispatchService dispatchBizService) {
-        this.dispatchBizService = dispatchBizService;
-    }
-
     /**
      * add dispatch task
      *

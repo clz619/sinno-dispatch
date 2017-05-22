@@ -32,7 +32,7 @@ public class DispatchCore {
 
     private DispatchEngine dispatchEngine = new DispatchEngine();
 
-    private Integer virtualNodeNum = 1;
+    private Integer virtualNodeNum = 8;
 
     public void setPerFetchSleepTimeMs(int sleepPerFetchTimeMs) {
         properties.setProperty(ServerProps.SERVER_PER_FETCH_SLEEP_TIMEMS, "" + sleepPerFetchTimeMs);
@@ -127,6 +127,8 @@ public class DispatchCore {
      * 启动引擎
      */
     public void startEngine() throws Exception {
+        LOG.info("start engine props:{}", new Object[]{properties});
+
         dispatchEngine.start(properties);
     }
 
