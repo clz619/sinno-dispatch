@@ -98,7 +98,7 @@ public class DispatchEngine {
 
         String coreSize = properties.getProperty(ServerProps.CORE_SIZE, "2");
 
-        String maxSize = properties.getProperty(ServerProps.MAX_SIZE, "5");
+        String maxSize = properties.getProperty(ServerProps.MAX_SIZE, "16");
 
         String maxTrytime = properties.getProperty(ServerProps.MAX_TRYTIME, "3");
 

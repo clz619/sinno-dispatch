@@ -65,7 +65,7 @@ public class EventExecutor {
         int maxSize = handlerServer.getHandlerMaxSize();
 
         // 时间执行线程池
-        this.eventConsumerPool = new ThreadPoolExecutor(coreSize, maxSize, 10L, TimeUnit.MILLISECONDS,
+        this.eventConsumerPool = new ThreadPoolExecutor(coreSize, maxSize, 30L, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(10000), new ThreadFactory() {
             AtomicInteger index = new AtomicInteger();
 
@@ -99,12 +99,12 @@ public class EventExecutor {
 
             int queueSize = eventConsumerPool.getQueue().size();
 
-            if (queueSize > 500) {
-                LOG.warn("event consumer pool queue size:{}>500,to next fetch task...", new Object[]{queueSize});
-                return;
-            } else {
+//            if (queueSize > 500) {
+//                LOG.warn("event consumer pool queue size:{}>500,to next fetch task...", new Object[]{queueSize});
+//                return;
+//            } else {
                 LOG.info("event consumer pool queue size:{}", new Object[]{queueSize});
-            }
+//            }
 
             List<DispatchTaskEntity> dispatchTaskEntities = eventFetcher.getTask(eventConfig.getNodeList());
 
