@@ -30,6 +30,8 @@ public class EventExecutor {
 
     private static final Logger LOG = LoggerFactory.getLogger("dispatch");
 
+    private final ReentrantLock lock = new ReentrantLock();
+
     private HandlerServer handlerServer;
 
     private EventExecutorAgent eventExecutorAgent;
@@ -44,7 +46,7 @@ public class EventExecutor {
 
     private EventFetcher eventFetcher;
 
-    private final ReentrantLock lock = new ReentrantLock();
+    private EventFetchStat eventExecutorStat;
 
     private DataQueueCenter dataQueueCenter;
 
@@ -63,6 +65,12 @@ public class EventExecutor {
         this.eventConfig = eventConfig;
         this.eventFilter = eventFilter;
         this.eventFetcher = eventFetcher;
+
+        this.eventExecutorStat = new EventFetchStat();
+        this.eventExecutorStat.setDefaultFetchNum(handlerServer.getPerFetchNum());
+        this.eventExecutorStat.setNowFetchNum(handlerServer.getPerFetchNum());
+        this.eventExecutorStat.setDefaultFetchPerTs(handlerServer.getPerFetchSleepTimeMs());
+        this.eventExecutorStat.setNowFetchPerTs(handlerServer.getPerFetchSleepTimeMs());
 
         String handlerName = eventConfig.getHandler();
         final String handlerNameTemp = handlerName;
@@ -101,6 +109,18 @@ public class EventExecutor {
 
     }
 
+    private boolean isDoNow() {
+        long lastFetchTs = eventExecutorStat.getLastFetchTs();
+        long nowFetchPerTs = eventExecutorStat.getNowFetchPerTs();
+
+        if ((lastFetchTs + nowFetchPerTs) > System.currentTimeMillis()) {
+            LOG.info("not do now !!");
+            return false;
+        }
+
+        return true;
+    }
+
     public void doWork() {
         if (eventConfig.getHandlerIdentifyCode() != handlerServer.getHandlerIdentityCode()) {
             //集群发送改变，不做处理
@@ -114,31 +134,47 @@ public class EventExecutor {
 
         try {
             if (!handlerServer.isCanRunning()) {
-                LOG.info("handlder server un run.");
+                LOG.info("handler server un run.");
                 return;
             }
 
+            //FIXME 处理速度 小于 获取速度，会取出重复的事件，需要进行控制
+            // 优化事件处理速度，保证获取的事件在获取间隔内能处理完
+            // 优化 获取逻辑，记录上次获取的最后一个事件，从这个事件之后进行获取，但也有可能导致异常重试的事件获取异常
             int queueSize = this.eventQueueTeam.getTaskCount();
 
-            if (queueSize > 200) {
-                LOG.warn("event consumer pool queue size:{}>200,to next fetch task...", new Object[]{queueSize});
+            if (queueSize > 50) {
+                LOG.warn("event consumer pool queue size:{} > 50 , to next fetch task...", new Object[]{queueSize});
                 return;
             } else {
                 LOG.info("event consumer pool queue size:{}", new Object[]{queueSize});
             }
 
-            List<DispatchTaskEntity> dispatchTaskEntities = eventFetcher.getTask(eventConfig.getNodeList());
-
-            if (CollectionUtils.isEmpty(dispatchTaskEntities)) {
-                LOG.warn("no task for handler:{} , nodes:{} , registerVersion:{} , registerTime:{}"
-                        , new Object[]{eventConfig.getHandler(),
-                                eventConfig.getNodeList(),
-                                handlerServer.getRegisterVersion(),
-                                handlerServer.getRegisterTime()}
-                );
+            if (!isDoNow()) {
                 return;
             }
+            eventExecutorStat.setLastFetchTs(System.currentTimeMillis());
 
+            LOG.info("event executor handler:{} , nodelist:{} , registerVersion:{} , registerTime:{} , stat:{}",
+                    new Object[]{eventConfig.getHandler(), eventConfig.getNodeList()
+                            , handlerServer.getRegisterVersion()
+                            , handlerServer.getRegisterTime(), eventExecutorStat});
+
+            List<DispatchTaskEntity> dispatchTaskEntities = eventFetcher.getTask(eventConfig.getNodeList(), 0, eventExecutorStat.getNowFetchNum());
+            eventExecutorStat.setLastFetchNum(dispatchTaskEntities.size());
+
+            if (CollectionUtils.isEmpty(dispatchTaskEntities)) {
+                eventExecutorStat.incrNowFetchPerTs();
+                return;
+            } else {
+//                if (dispatchTaskEntities.size() == eventExecutorStat.getNowFetchNum()) {
+//                    eventExecutorStat.setNowFetchPerTs(eventExecutorStat.getMinFetchPerTs());
+//                } else {
+                eventExecutorStat.decrNowFetchPerTs();
+//                }
+            }
+
+            eventExecutorStat.incrFetch(dispatchTaskEntities.size());
 
             dispatchTasks(dispatchTaskEntities);
         } catch (Exception e) {
@@ -158,6 +194,7 @@ public class EventExecutor {
             try {
                 // repo check if not contain to add
                 if (!eventFilter.isAccept(dispatchTaskEntity.getId())) {
+                    eventExecutorStat.incrFilter(1);
                     continue;
                 }
 
@@ -165,7 +202,7 @@ public class EventExecutor {
 
                 DispatchHandler dispatchHandler = dispatchHandlerConverter.converter(handler);
 
-                EventConsumer eventConsumer = new EventConsumer(handlerServer, eventExecutorAgent, dispatchTaskEntity, dispatchHandler, handlerServer.getDispatchResultService(), eventConfig.getHandlerIdentifyCode());
+                EventConsumer eventConsumer = new EventConsumer(handlerServer, this, eventExecutorAgent, dispatchTaskEntity, dispatchHandler, handlerServer.getDispatchResultService(), eventConfig.getHandlerIdentifyCode());
 
                 //queue team add task
                 eventQueueTeam.addTask(eventConsumer);
@@ -187,5 +224,25 @@ public class EventExecutor {
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * incr success
+     *
+     * @param num
+     * @return
+     */
+    public long incrSuccess(long num) {
+        return eventExecutorStat.incrSuccess(num);
+    }
+
+    /**
+     * incr fail
+     *
+     * @param num
+     * @return
+     */
+    public long incrFail(long num) {
+        return eventExecutorStat.incrFail(num);
     }
 }

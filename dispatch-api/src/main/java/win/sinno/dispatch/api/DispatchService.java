@@ -17,12 +17,13 @@ public interface DispatchService extends DispatchTaskService {
      *
      * @param handlerGroup
      * @param nodeList
+     * @param offset
      * @param limit
      * @param dispatchContext
      * @return
      */
     List<DispatchTaskEntity> findDispatchTasksWithLimit(String handlerGroup, List<Integer> nodeList,
-                                                        int limit, DispatchContext dispatchContext);
+                                                        int offset, int limit, DispatchContext dispatchContext);
 
 
 }

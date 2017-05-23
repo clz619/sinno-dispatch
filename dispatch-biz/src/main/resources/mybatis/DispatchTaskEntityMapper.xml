@@ -80,7 +80,7 @@
             AND next_exec_time &lt; #{nowExecTs}
         </where>
         ORDER BY next_exec_time ASC
-        <if test="limit!=null">LIMIT #{limit}</if>
+        <if test="limit!=null">LIMIT #{offset},#{limit}</if>
     </select>
 
     <insert id="insert" parameterType="dispatchTaskEntity"

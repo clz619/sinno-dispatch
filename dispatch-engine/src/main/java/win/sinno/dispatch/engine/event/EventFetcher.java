@@ -34,7 +34,7 @@ public class EventFetcher {
      * @param nodeList
      * @return
      */
-    public List<DispatchTaskEntity> getTask(List<Integer> nodeList) {
+    public List<DispatchTaskEntity> getTask(List<Integer> nodeList, Integer offset, Integer fetchNum) {
 
         if (CollectionUtils.isEmpty(nodeList)) {
             throw new IllegalArgumentException("nodeList is empty.");
@@ -52,7 +52,7 @@ public class EventFetcher {
         DispatchService dispatchService = (DispatchService) dispatchTaskService;
 
         //任务实体集合
-        dispatchTaskEntities = dispatchService.findDispatchTasksWithLimit(handlerServer.getHandlerGroup(), nodeList, handlerServer.getPerFetchNum(), dispatchContext);
+        dispatchTaskEntities = dispatchService.findDispatchTasksWithLimit(handlerServer.getHandlerGroup(), nodeList, offset, fetchNum, dispatchContext);
 
         return dispatchTaskEntities == null ? Collections.<DispatchTaskEntity>emptyList() : dispatchTaskEntities;
     }

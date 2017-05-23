@@ -43,7 +43,7 @@ public class EventExecutorAgent {
 
         this.eventConsumerRepository = handlerServer.getEventConsumerRepository();
 
-        eventExecutorThreadPool = new ThreadPoolExecutor(4, 32, 10l, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(5000)
+        eventExecutorThreadPool = new ThreadPoolExecutor(2, 16, 10l, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(5000)
                 , new ThreadFactory() {
 
             AtomicInteger index = new AtomicInteger();
@@ -111,7 +111,6 @@ public class EventExecutorAgent {
 
             eventExecutors.add(eventExecutor);
 
-            // 初始化完成
             isInit.set(true);
         } finally {
             lock.unlock();
@@ -128,6 +127,7 @@ public class EventExecutorAgent {
 
     }
 
+    // event executor -> work
     public void execute() {
         List<EventExecutor> eventExecutors = getEventExecutors();
 

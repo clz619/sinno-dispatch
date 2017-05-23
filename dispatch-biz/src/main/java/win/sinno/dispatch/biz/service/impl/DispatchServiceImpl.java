@@ -46,7 +46,7 @@ public class DispatchServiceImpl implements DispatchService {
      * @return
      */
     @Override
-    public List<DispatchTaskEntity> findDispatchTasksWithLimit(String handlerGroup, List<Integer> nodes, int limit, DispatchContext dispatchContext) {
+    public List<DispatchTaskEntity> findDispatchTasksWithLimit(String handlerGroup, List<Integer> nodes, int offset, int limit, DispatchContext dispatchContext) {
 
         if (StringUtils.isBlank(handlerGroup)
                 || CollectionUtils.isEmpty(nodes)) {
@@ -55,7 +55,7 @@ public class DispatchServiceImpl implements DispatchService {
 
         Long nowTs = System.currentTimeMillis();
 
-        List<win.sinno.dispatch.biz.model.DispatchTaskEntity> dispatchTaskEntities = dispatchTaskEntityDao.selectWithLimit(handlerGroup, nodes, nowTs, limit);
+        List<win.sinno.dispatch.biz.model.DispatchTaskEntity> dispatchTaskEntities = dispatchTaskEntityDao.selectWithLimit(handlerGroup, nodes, nowTs, offset, limit);
 
         if (CollectionUtils.isEmpty(dispatchTaskEntities)) {
             return Collections.emptyList();

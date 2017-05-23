@@ -25,6 +25,8 @@ public class EventConsumer implements Runnable {
 
     private HandlerServer handlerServer;
 
+    private EventExecutor eventExecutor;
+
     private EventExecutorAgent eventExecutorManager;
 
     /**
@@ -60,9 +62,10 @@ public class EventConsumer implements Runnable {
      * @param dispatchResultManager
      * @param executorVersionSnapshot
      */
-    public EventConsumer(HandlerServer handlerServer, EventExecutorAgent eventExecutorManager, DispatchTaskEntity dispatchTaskEntity, DispatchHandler dispatchHandler,
+    public EventConsumer(HandlerServer handlerServer, EventExecutor eventExecutor, EventExecutorAgent eventExecutorManager, DispatchTaskEntity dispatchTaskEntity, DispatchHandler dispatchHandler,
                          DispatchResultService dispatchResultManager, int executorVersionSnapshot) {
         this.handlerServer = handlerServer;
+        this.eventExecutor = eventExecutor;
         this.eventExecutorManager = eventExecutorManager;
         this.dispatchTaskEntity = dispatchTaskEntity;
         this.dispatchHandler = dispatchHandler;
@@ -112,21 +115,24 @@ public class EventConsumer implements Runnable {
             dispatchParam.setRetryTime(dispatchTaskEntity.getRetryTime());
             dispatchParam.setBizParam(dispatchTaskEntity.getParameter());
 
-            long start = System.currentTimeMillis();
             result = dispatchHandler.invoke(dispatchParam);
-            long end = System.currentTimeMillis();
-
-            long duration = end - start;
 
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
 
-            // 失败重试
             result = DispatchResult.FAIL2RETRY;
         } finally {
             eventConsumerRepository.remove(dispatchTaskEntity.getId());
             handlerServer.decrRunningCount();
             dispatchResultService.afterConsumer(result, dispatchTaskEntity);
+
+            // dispatch result
+            if (result == DispatchResult.SUCCESS) {
+                eventExecutor.incrSuccess(1);
+            } else {
+                eventExecutor.incrFail(1);
+            }
+
             EventThreadContext.destory();
         }
 

@@ -185,9 +185,9 @@ public class DispatchServiceImpl implements DispatchService {
      * @return
      */
     @Override
-    public List<DispatchTaskEntity> findDispatchTasksWithLimit(String handlerGroup, List<Integer> nodeList, int limit, DispatchContext dispatchContext) {
+    public List<DispatchTaskEntity> findDispatchTasksWithLimit(String handlerGroup, List<Integer> nodeList, int offset, int limit, DispatchContext dispatchContext) {
         if (StringUtils.isBlank(handlerGroup)
-                || CollectionUtils.isEmpty(nodeList) || limit <= 0
+                || CollectionUtils.isEmpty(nodeList) || offset < 0 || limit <= 0
                 ) {
             return Collections.emptyList();
         }
@@ -198,6 +198,6 @@ public class DispatchServiceImpl implements DispatchService {
             return Collections.emptyList();
         }
 
-        return dispatchBizService.findDispatchTasksWithLimit(handlerGroup, nodeList, limit, dispatchContext);
+        return dispatchBizService.findDispatchTasksWithLimit(handlerGroup, nodeList, offset, limit, dispatchContext);
     }
 }
