@@ -2,7 +2,7 @@ package win.sinno.dispatch.register.dao;
 
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
-import win.sinno.common.util.IdWorkerUtil;
+import win.sinno.common.util.IdWorker;
 import win.sinno.common.util.NetworkUtil;
 import win.sinno.dispatch.engine.util.VersionGenerator;
 import win.sinno.dispatch.register.model.DispatchRegister;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class DispatchRegisterDaoTest {
 
-    private IdWorkerUtil idWorker = new IdWorkerUtil(1);
+    private IdWorker idWorker = new IdWorker(1);
 
     private SpringLaunchContext springLaunch;
 

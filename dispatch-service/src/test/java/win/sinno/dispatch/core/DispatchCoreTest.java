@@ -3,7 +3,7 @@ package win.sinno.dispatch.core;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import sun.misc.URLClassPath;
-import win.sinno.common.util.IdWorkerUtil;
+import win.sinno.common.util.IdWorker;
 import win.sinno.common.util.JsonUtil;
 import win.sinno.common.util.PropertiesUtil;
 import win.sinno.dispatch.api.DispatchService;
@@ -66,7 +66,7 @@ public class DispatchCoreTest {
 
     @Test
     public void testAddTask1() throws InterruptedException {
-        IdWorkerUtil idWorker = new IdWorkerUtil(1);
+        IdWorker idWorker = new IdWorker(1);
         long b = System.currentTimeMillis();
         long e = 0;
         AtomicInteger i = new AtomicInteger(0);
@@ -108,7 +108,7 @@ public class DispatchCoreTest {
 
     @Test
     public void testAddTask2() throws InterruptedException {
-        IdWorkerUtil idWorker = new IdWorkerUtil(2);
+        IdWorker idWorker = new IdWorker(2);
         long b = System.currentTimeMillis();
         long e = 0;
         AtomicInteger i = new AtomicInteger(0);
@@ -149,7 +149,7 @@ public class DispatchCoreTest {
 
     @Test
     public void testAddTask3() throws InterruptedException {
-        IdWorkerUtil idWorker = new IdWorkerUtil(3);
+        IdWorker idWorker = new IdWorker(3);
         long b = System.currentTimeMillis();
         long e = 0;
         AtomicInteger i = new AtomicInteger(0);

@@ -2,7 +2,7 @@ package win.sinno.dispatch.service.spring.launch;
 
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
-import win.sinno.common.util.IdWorkerUtil;
+import win.sinno.common.util.IdWorker;
 import win.sinno.dispatch.api.DispatchTaskEntity;
 import win.sinno.dispatch.api.TaskAttribute;
 import win.sinno.dispatch.biz.service.impl.DispatchServiceImpl;
@@ -20,7 +20,7 @@ import java.util.List;
 
 public class SpringLaunchTest {
 
-    private IdWorkerUtil idWorker = new IdWorkerUtil(1);
+    private IdWorker idWorker = new IdWorker(1);
 
     private SpringLaunchContext springLaunch;
 
@@ -77,7 +77,7 @@ public class SpringLaunchTest {
 
         int limit = 10;
 
-        List<DispatchTaskEntity> list = dispatchService.findDispatchTasksWithLimit(handlerGroup, nodes, limit, null);
+        List<DispatchTaskEntity> list = dispatchService.findDispatchTasksWithLimit(handlerGroup, nodes, 0, limit, null);
         System.out.println("get info size:" + list.size());
         for (DispatchTaskEntity entity : list) {
             System.out.println(entity);

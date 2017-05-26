@@ -38,7 +38,7 @@
 
         <!--sinno-->
         <version.sinno.model>1.0.1</version.sinno.model>
-        <version.sinno.common>1.0.1</version.sinno.common>
+        <version.sinno.common>1.0.2</version.sinno.common>
         <version.sinno.concurrent>1.0.9</version.sinno.concurrent>
         <!--junit-->
         <version.junit>4.12</version.junit>

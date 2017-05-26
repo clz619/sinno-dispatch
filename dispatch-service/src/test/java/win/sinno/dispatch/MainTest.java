@@ -2,7 +2,7 @@ package win.sinno.dispatch;
 
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
-import win.sinno.common.util.IdWorkerUtil;
+import win.sinno.common.util.IdWorker;
 import win.sinno.common.util.PropertiesUtil;
 import win.sinno.dispatch.api.DispatchService;
 import win.sinno.dispatch.core.service.impl.DispatchServiceImpl;
@@ -19,7 +19,7 @@ import java.util.Properties;
  */
 public class MainTest {
 
-    private IdWorkerUtil idWorker = new IdWorkerUtil(1);
+    private IdWorker idWorker = new IdWorker(1);
 
     private SpringLaunchContext springLaunch;
 
